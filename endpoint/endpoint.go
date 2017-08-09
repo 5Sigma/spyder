@@ -1,6 +1,7 @@
 package endpoint
 
 import (
+	"errors"
 	"github.com/Jeffail/gabs"
 	"io/ioutil"
 	"net/url"
@@ -20,27 +21,34 @@ type (
 
 func Load(filename string) (*EndpointConfig, error) {
 	var (
-		fileBytes  []byte
+		fileBytes []byte
+		err       error
+	)
+	fileBytes, err = ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	return LoadBytes(fileBytes)
+}
+
+func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
+	var (
 		jsonObject *gabs.Container
 		err        error
 		epConfig   *EndpointConfig
 	)
 
-	fileBytes, err = ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
 	jsonObject, err = gabs.ParseJSON(fileBytes)
 	if err != nil {
 		return nil, err
 	}
-
+	if !validate(jsonObject) {
+		return nil, errors.New("Invalid endpoint configuration")
+	}
 	method, _ := jsonObject.Path("method").Data().(string)
 	url, _ := jsonObject.Path("url").Data().(string)
 
 	epConfig = &EndpointConfig{
-		Filename:   filename,
 		json:       jsonObject,
 		Method:     method,
 		Url:        url,
@@ -109,4 +117,14 @@ func (ep *EndpointConfig) GetRequestParams() map[string]string {
 		paramsMap[key] = child.Data().(string)
 	}
 	return paramsMap
+}
+
+func validate(json *gabs.Container) bool {
+	if !json.ExistsP("method") {
+		return false
+	}
+	if !json.ExistsP("url") {
+		return false
+	}
+	return true
 }

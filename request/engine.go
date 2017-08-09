@@ -13,20 +13,21 @@ import (
 	"net/http"
 )
 
-type (
-	ScriptEngine struct {
-		VM             *otto.Otto
-		Constants      map[string]string
-		AssetPath      string
-		Response       *Response
-		EndpointConfig *endpoint.EndpointConfig
-		Payload        []byte
-		Request        *http.Request
-	}
-)
+// ScriptEngine - A scripting engine used to execute hook scripts during the
+// request process. It is built to execute arbitrary Javascript.
+type ScriptEngine struct {
+	VM             *otto.Otto
+	Constants      map[string]string
+	AssetPath      string
+	Response       *Response
+	EndpointConfig *endpoint.EndpointConfig
+	Payload        []byte
+	Request        *http.Request
+	Debug          string
+}
 
+// NewScriptEngine - Generates a new script engine.
 func NewScriptEngine(endpointConfig *endpoint.EndpointConfig) *ScriptEngine {
-
 	vm := otto.New()
 
 	eng := &ScriptEngine{
@@ -46,12 +47,13 @@ func NewScriptEngine(endpointConfig *endpoint.EndpointConfig) *ScriptEngine {
 	headerObj.Set("get", eng.getHeader)
 	headerObj.Set("set", eng.setHeader)
 
+	vm.Set("$debug", eng.setDebug)
 	vm.Set("$hmac", eng.hmac)
 
 	return eng
 }
 
-//read javascript file and execute
+//ExecuteFile - Executes a script contianed in a file.
 func (eng *ScriptEngine) ExecuteFile(filepath string) error {
 	data, err := ioutil.ReadFile(filepath)
 	if err != nil {
@@ -64,6 +66,8 @@ func (eng *ScriptEngine) ExecuteFile(filepath string) error {
 	return nil
 }
 
+// SetResponse - Used to set the web respone on the engine. It also makes this
+// available to the script.
 func (eng *ScriptEngine) SetResponse(res *Response) {
 	eng.Response = res
 	requestObj, _ := eng.VM.Object(`$request = {}`)
@@ -75,7 +79,7 @@ func (eng *ScriptEngine) SetResponse(res *Response) {
 	responseObj.Set("body", string(res.Content))
 }
 
-//executes commands
+//Execute - Executes a Javascript.
 func (eng *ScriptEngine) Execute(script string) error {
 	_, err := eng.VM.Run(script)
 	if err != nil {
@@ -84,22 +88,26 @@ func (eng *ScriptEngine) Execute(script string) error {
 	return err
 }
 
+// ExecuteTransform - Executes the script and with a payload value set and
+// returns the newly set payload. Used for performing request transformations.
 func (eng *ScriptEngine) ExecuteTransform(script string, payload []byte) []byte {
 	eng.Payload = payload
 	eng.ExecuteFile(script)
 	return eng.Payload
 }
 
+// Validate - Validates that the Javascript is valid.
 func (eng *ScriptEngine) Validate(script string) error {
 	_, err := parser.ParseFile(nil, "", script, 0)
 	return err
 }
 
+// jsThrow - Used to throw javascript errors from Go.
 func jsThrow(call otto.FunctionCall, err error) {
-	value, _ := call.Otto.Call("new Error", nil, err.Error())
-	panic(value)
+	call.Otto.Call("new Error", nil, err.Error())
 }
 
+// setLocalVar - Sets a config value in the local config.
 func (engine *ScriptEngine) setLocalVar(call otto.FunctionCall) otto.Value {
 	key, _ := call.Argument(0).ToString()
 	value, _ := call.Argument(1).ToString()
@@ -107,6 +115,7 @@ func (engine *ScriptEngine) setLocalVar(call otto.FunctionCall) otto.Value {
 	return otto.Value{}
 }
 
+// getVar - Returns a config variable.
 func (engine *ScriptEngine) getVar(call otto.FunctionCall) otto.Value {
 	key, _ := call.Argument(0).ToString()
 	if config.LocalConfig.VariableExists(key) {
@@ -127,12 +136,14 @@ func (engine *ScriptEngine) getPayload(call otto.FunctionCall) otto.Value {
 	return ov
 }
 
+// setPayload - Sets the payload value on the engine.
 func (engine *ScriptEngine) setPayload(call otto.FunctionCall) otto.Value {
 	val, _ := call.Argument(0).ToString()
 	engine.Payload = []byte(val)
 	return otto.Value{}
 }
 
+// hmac - Calcualtes an HMAC signature using SHA256
 func (engine *ScriptEngine) hmac(call otto.FunctionCall) otto.Value {
 	secretStr, _ := call.Argument(0).ToString()
 	payloadStr, _ := call.Argument(1).ToString()
@@ -144,6 +155,7 @@ func (engine *ScriptEngine) hmac(call otto.FunctionCall) otto.Value {
 	return v
 }
 
+// getHeader - Returns a header from the request.
 func (engine *ScriptEngine) getHeader(call otto.FunctionCall) otto.Value {
 	headerName, _ := call.Argument(0).ToString()
 	val := engine.Request.Header.Get(headerName)
@@ -151,9 +163,17 @@ func (engine *ScriptEngine) getHeader(call otto.FunctionCall) otto.Value {
 	return v
 }
 
+// setHeader - sets a header on the request.
 func (engine *ScriptEngine) setHeader(call otto.FunctionCall) otto.Value {
 	headerName, _ := call.Argument(0).ToString()
 	headerValue, _ := call.Argument(1).ToString()
 	engine.Request.Header.Set(headerName, headerValue)
+	return otto.Value{}
+}
+
+// setDebug - Sets the debug value on the engine. Used for testing.
+func (engine *ScriptEngine) setDebug(call otto.FunctionCall) otto.Value {
+	val, _ := call.Argument(0).ToString()
+	engine.Debug = val
 	return otto.Value{}
 }

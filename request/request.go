@@ -2,12 +2,9 @@ package request
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/5sigma/spyder/endpoint"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"path"
 	"strings"
 	"time"
@@ -40,7 +37,7 @@ func Do(config *endpoint.EndpointConfig) (*Response, error) {
 	}
 
 	req, err = http.NewRequest(config.Method,
-		config.RequestUrl(), bytes.NewReader(requestData))
+		config.RequestURL(), bytes.NewReader(requestData))
 
 	req.Header = config.Headers()
 
@@ -95,6 +92,6 @@ func Do(config *endpoint.EndpointConfig) (*Response, error) {
 }
 
 func (res *Response) IsResponseJSON() bool {
-	contentType := stringds.ToLower(res.Response.Header.Get("Content-Type"))
+	contentType := strings.ToLower(res.Response.Header.Get("Content-Type"))
 	return strings.Contains(contentType, "json")
 }

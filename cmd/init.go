@@ -17,6 +17,7 @@ package cmd
 import (
 	"github.com/5sigma/spyder/output"
 	"github.com/spf13/cobra"
+	"io/ioutil"
 	"os"
 	"path"
 )
@@ -38,12 +39,20 @@ default it generates the project in the current directory.`,
 			createProjectFolder(projectPath, "config"))
 		output.PrintResult("Created scripts folder",
 			createProjectFolder(projectPath, "scripts"))
+		output.PrintResult("Create global config",
+			writeFile("config.json", ""))
+		output.PrintResult("Create local config",
+			writeFile("config.local.json", ""))
 		output.PrintResult("Created project", nil)
 	},
 }
 
 func createProjectFolder(projectPath string, folder string) error {
 	return os.MkdirAll(path.Join(projectPath, folder), os.ModePerm)
+}
+
+func writeFile(path string, content string) error {
+	return ioutil.WriteFile(path, []byte(content), 0644)
 }
 
 func init() {
