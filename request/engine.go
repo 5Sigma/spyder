@@ -35,8 +35,8 @@ func NewScriptEngine(endpointConfig *endpoint.EndpointConfig) *ScriptEngine {
 	}
 
 	varObj, _ := vm.Object("$variables = {}")
-	varObj.Set("set", eng.engine_setLocalVar)
-	varObj.Set("get", eng.engine_getVar)
+	varObj.Set("set", eng.setLocalVar)
+	varObj.Set("get", eng.getVar)
 
 	payloadObj, _ := vm.Object("$payload = {}")
 	payloadObj.Set("get", eng.getPayload)
@@ -100,14 +100,14 @@ func jsThrow(call otto.FunctionCall, err error) {
 	panic(value)
 }
 
-func (engine *ScriptEngine) engine_setLocalVar(call otto.FunctionCall) otto.Value {
+func (engine *ScriptEngine) setLocalVar(call otto.FunctionCall) otto.Value {
 	key, _ := call.Argument(0).ToString()
 	value, _ := call.Argument(1).ToString()
 	config.LocalConfig.SetVariable(key, value)
 	return otto.Value{}
 }
 
-func (engine *ScriptEngine) engine_getVar(call otto.FunctionCall) otto.Value {
+func (engine *ScriptEngine) getVar(call otto.FunctionCall) otto.Value {
 	key, _ := call.Argument(0).ToString()
 	if config.LocalConfig.VariableExists(key) {
 		v := config.LocalConfig.GetVariable(key)

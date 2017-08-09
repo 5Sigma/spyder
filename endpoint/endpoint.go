@@ -3,6 +3,7 @@ package endpoint
 import (
 	"github.com/Jeffail/gabs"
 	"io/ioutil"
+	"net/url"
 	"strings"
 )
 
@@ -88,5 +89,24 @@ func (ep *EndpointConfig) RequestMethod() string {
 }
 
 func (ep *EndpointConfig) RequestURL() string {
-	return ep.GetString("url")
+	if ep.Method == "GET" {
+		baseUrl, _ := url.Parse(ep.Url)
+		params := url.Values{}
+		for k, v := range ep.GetRequestParams() {
+			params.Add(k, v)
+		}
+		baseUrl.RawQuery = params.Encode()
+		return baseUrl.String()
+	} else {
+		return ep.GetString("url")
+	}
+}
+
+func (ep *EndpointConfig) GetRequestParams() map[string]string {
+	paramsMap := make(map[string]string)
+	children, _ := ep.json.S("data").ChildrenMap()
+	for key, child := range children {
+		paramsMap[key] = child.Data().(string)
+	}
+	return paramsMap
 }

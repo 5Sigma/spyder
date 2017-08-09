@@ -40,7 +40,7 @@ func Do(config *endpoint.EndpointConfig) (*Response, error) {
 	}
 
 	req, err = http.NewRequest(config.Method,
-		config.Url, bytes.NewReader(requestData))
+		config.RequestUrl(), bytes.NewReader(requestData))
 
 	req.Header = config.Headers()
 
@@ -94,24 +94,7 @@ func Do(config *endpoint.EndpointConfig) (*Response, error) {
 	return res, nil
 }
 
-func generateGetUrl(urlString string, postData map[string]string) string {
-	baseUrl, err := url.Parse(urlString)
-	if err != nil {
-		return urlString
-	}
-
-	params := url.Values{}
-
-	for k, v := range postData {
-		if strings.HasPrefix(postData[k], "$") {
-			varName := strings.Replace(postData[k], "$", "", 1)
-			varValue := viper.GetString(fmt.Sprintf("variables.%s", varName))
-			params.Add(k, varValue)
-		} else {
-			params.Add(k, v)
-		}
-	}
-
-	baseUrl.RawQuery = params.Encode()
-	return baseUrl.String()
+func (res *Response) IsResponseJSON() bool {
+	contentType := stringds.ToLower(res.Response.Header.Get("Content-Type"))
+	return strings.Contains(contentType, "json")
 }

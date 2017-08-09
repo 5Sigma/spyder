@@ -21,10 +21,9 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 		Name:        "body",
 		Description: "Displays the content received from the server.",
 		Call: func(sh *gshell.Shell, args []string) {
-			switch res.Response.Header.Get("Content-Type") {
-			case "application/json":
+			if res.IsResponseJSON() {
 				output.PrintJson(res.Content)
-			default:
+			} else {
 				fmt.Println(string(res.Content))
 			}
 		},
