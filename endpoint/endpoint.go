@@ -83,7 +83,7 @@ func (ep *EndpointConfig) GetJSONString(path string) string {
 	return ep.json.Path("data").String()
 }
 
-// GETJSONBytes - returns the inner JSON at the path as a byte array.
+// GetJSONBytes - returns the inner JSON at the path as a byte array.
 func (ep *EndpointConfig) GetJSONBytes(path string) []byte {
 	return ep.json.Path("data").Bytes()
 }
@@ -108,13 +108,13 @@ func (ep *EndpointConfig) RequestMethod() string {
 // and has request parameters they are included in the URL.
 func (ep *EndpointConfig) RequestURL() string {
 	if ep.Method == "GET" {
-		baseUrl, _ := url.Parse(config.ExpandString(ep.Url))
+		baseURL, _ := url.Parse(config.ExpandString(ep.Url))
 		params := url.Values{}
 		for k, v := range ep.GetRequestParams() {
 			params.Add(k, v)
 		}
-		baseUrl.RawQuery = params.Encode()
-		return baseUrl.String()
+		baseURL.RawQuery = params.Encode()
+		return baseURL.String()
 	} else {
 		return ep.GetString("url")
 	}
@@ -134,9 +134,11 @@ func (ep *EndpointConfig) GetRequestParams() map[string]string {
 	return paramsMap
 }
 
+// RequestData - returns the data attribute from the config. This contains the
+// payload, for a POST request, that will be sent to the server.
 func (ep *EndpointConfig) RequestData() []byte {
-	dataJson := config.ExpandString(ep.GetJSONString("data"))
-	return []byte(dataJson)
+	dataJSON := config.ExpandString(ep.GetJSONString("data"))
+	return []byte(dataJSON)
 }
 
 // validate - Validates that the configuration is valid and has the required
