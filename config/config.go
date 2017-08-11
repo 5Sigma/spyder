@@ -5,6 +5,8 @@ import (
 	"github.com/Jeffail/gabs"
 	"io/ioutil"
 	"os"
+	"regexp"
+	"strings"
 )
 
 // Config - The config object is used to store the application configuration.
@@ -24,6 +26,38 @@ var GlobalConfig = loadConfigFile("config.json")
 // InMemory - When true the config will not write to the disk. This is used for
 // testing.
 var InMemory = false
+
+// VariableExists - Checks if a variable exists in either config.
+func VariableExists(str string) bool {
+	if LocalConfig.VariableExists(str) {
+		return true
+	}
+	if GlobalConfig.VariableExists(str) {
+		return true
+	}
+	return false
+}
+
+// GetVariable - Returns the value of a variable from either config. Priority
+// goes to the local config.
+func GetVariable(str string) string {
+	if LocalConfig.VariableExists(str) {
+		return LocalConfig.GetVariable(str)
+	}
+	if GlobalConfig.VariableExists(str) {
+		return GlobalConfig.GetVariable(str)
+	}
+	return ""
+}
+
+// ExpandString - Given a string with a variable inside it. The string will be
+// expanded and the variable placeholders replaced with variables from either
+// config. Priority goes to the local config.
+func ExpandString(str string) string {
+	str = LocalConfig.ExpandString(str)
+	str = GlobalConfig.ExpandString(str)
+	return str
+}
 
 // LoadConfigFile - Loads a config from a file on the disk.
 func loadConfigFile(filename string) *Config {
@@ -99,4 +133,19 @@ func (c *Config) GetSetting(name string) string {
 // String - returns the config JSON as a string.
 func (c *Config) String() string {
 	return c.json.String()
+}
+
+// ExpandString - Given a string with a variable inside it. The string will be
+// expanded and the variable placeholders replaced with variables from the
+// config.
+func (c *Config) ExpandString(str string) string {
+	re := regexp.MustCompile(`\$([A-Za-z0-9]+)`)
+	matches := re.FindAllStringSubmatch(str, -1)
+	for _, match := range matches {
+		v := c.GetVariable(match[1])
+		if v != "" {
+			str = strings.Replace(str, fmt.Sprintf("$%s", match[1]), v, 1)
+		}
+	}
+	return str
 }

@@ -12,9 +12,16 @@ import (
 // runCmd represents the run command
 var runCmd = &cobra.Command{
 	Use:     "request [endpoint]",
-	Aliases: []string{"req", "get"},
+	Aliases: []string{"req", "get", "r"},
 	Short:   "Make an endpoint request",
-	Long: `Send a request to an endpoint using a given endpoint configration file
+	Long: `Send a request to an endpoint using a given endpoint configration file.
+You need only specifiy the relative path from the endpoints folder to the 
+endpoint configuration. The file extension is also not needed.
+
+For instance a configuration located at endpoints/sessions/auth.json can be
+requested using:
+
+$ spyder request sessions/auth
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		config, err := endpoint.Load(path.Join("endpoints", args[0]+".json"))
@@ -34,5 +41,4 @@ var runCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(runCmd)
-	runCmd.Flags().BoolP("interactive", "i", false, "Run in interactive mode")
 }
