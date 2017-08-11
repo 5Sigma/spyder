@@ -1,0 +1,24 @@
+# .goreleaser.yml
+builds:
+  - binary: spyder
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+brew:
+  github:
+    owner: 5sigma
+    name: homebrew-tap
+  homepage: https://github.com/5Sigma/spyder
+  description: API testing in the terminal.
+fpm:
+  vendor: 5sigma
+  homepage: https://github.com/5Sigma/spyder
+  maintainer: Joe Bellus <joe@5sigma.io>
+  description: API testing in the terminal.
+  license: Apache 2.0
+  formats:
+    - deb
+    - rpm
