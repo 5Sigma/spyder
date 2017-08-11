@@ -4,15 +4,8 @@ import (
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
 	"net/http"
-	"os"
 	"testing"
 )
-
-func TestMain(m *testing.M) {
-	config.InMemory = true
-	retCode := m.Run()
-	os.Exit(retCode)
-}
 
 func TestSetVariable(t *testing.T) {
 	script := ` $variables.set('key', 'value'); `
