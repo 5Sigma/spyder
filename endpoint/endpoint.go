@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"errors"
+	"github.com/5sigma/spyder/config"
 	"github.com/Jeffail/gabs"
 	"io/ioutil"
 	"net/url"
@@ -19,6 +20,7 @@ type (
 	}
 )
 
+// Load - Loads a confugruation from a file on the disk.
 func Load(filename string) (*EndpointConfig, error) {
 	var (
 		fileBytes []byte
@@ -31,6 +33,7 @@ func Load(filename string) (*EndpointConfig, error) {
 	return LoadBytes(fileBytes)
 }
 
+// LoadBytes - Loads a configuration from a byte array
 func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 	var (
 		jsonObject *gabs.Container
@@ -69,36 +72,43 @@ func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 	return epConfig, nil
 }
 
+// GetString - returns a string from an arbitrary path in the configuration.
 func (ep *EndpointConfig) GetString(path string) string {
 	str, _ := ep.json.Path(path).Data().(string)
-	return str
+	return config.ExpandString(str)
 }
 
+// GetJSONString - returns the inner JSON at the path as a string.
 func (ep *EndpointConfig) GetJSONString(path string) string {
 	return ep.json.Path("data").String()
 }
 
+// GETJSONBytes - returns the inner JSON at the path as a byte array.
 func (ep *EndpointConfig) GetJSONBytes(path string) []byte {
 	return ep.json.Path("data").Bytes()
 }
 
+// Headers - returns the configured request headers as a string map
 func (ep *EndpointConfig) Headers() map[string][]string {
 	headerMap := make(map[string][]string)
 	children, _ := ep.json.S("headers").ChildrenMap()
 	for key, child := range children {
-		headerMap[key] = []string{child.Data().(string)}
+		headerMap[key] = []string{config.ExpandString(child.Data().(string))}
 	}
 	return headerMap
 }
 
+// RequestMethod - returns the request method.
 func (ep *EndpointConfig) RequestMethod() string {
 	method := strings.ToUpper(ep.GetString("method"))
 	return method
 }
 
+// RequestURL - returns the full url for the request. If this is a GET request
+// and has request parameters they are included in the URL.
 func (ep *EndpointConfig) RequestURL() string {
 	if ep.Method == "GET" {
-		baseUrl, _ := url.Parse(ep.Url)
+		baseUrl, _ := url.Parse(config.ExpandString(ep.Url))
 		params := url.Values{}
 		for k, v := range ep.GetRequestParams() {
 			params.Add(k, v)
@@ -110,15 +120,27 @@ func (ep *EndpointConfig) RequestURL() string {
 	}
 }
 
+// GetRequestParams - Returns a string map of any request params for the
+// request. This only applies to GET requests.
 func (ep *EndpointConfig) GetRequestParams() map[string]string {
+	if ep.RequestMethod() != "GET" {
+		return make(map[string]string)
+	}
 	paramsMap := make(map[string]string)
 	children, _ := ep.json.S("data").ChildrenMap()
 	for key, child := range children {
-		paramsMap[key] = child.Data().(string)
+		paramsMap[key] = config.ExpandString(child.Data().(string))
 	}
 	return paramsMap
 }
 
+func (ep *EndpointConfig) RequestData() []byte {
+	dataJson := config.ExpandString(ep.GetJSONString("data"))
+	return []byte(dataJson)
+}
+
+// validate - Validates that the configuration is valid and has the required
+// parameters.
 func validate(json *gabs.Container) bool {
 	if !json.ExistsP("method") {
 		return false

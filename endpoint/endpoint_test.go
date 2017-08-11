@@ -1,6 +1,7 @@
 package endpoint
 
 import (
+	"github.com/5sigma/spyder/config"
 	"github.com/Jeffail/gabs"
 	"testing"
 )
@@ -26,6 +27,8 @@ func TestLoad(t *testing.T) {
 }
 
 func TestRequestUrl(t *testing.T) {
+
+	//GET request with params
 	json := buildConfig()
 	params, _ := json.Object("data")
 	params.Set("3", "option1")
@@ -36,43 +39,93 @@ func TestRequestUrl(t *testing.T) {
 		t.Errorf("Request URL missmatch:\nExpecting: %s\nReceived: %s", expectedUrl,
 			ep.RequestURL())
 	}
+
+	// POST request
 	ep.Method = "POST"
 	if ep.RequestURL() != ep.Url {
 		t.Errorf("Request URL missmatch:\nExpecting: %s\nReceived: %s", ep.Url,
 			ep.RequestURL())
 	}
 
+	// GET request with variable expansion
+	config.LocalConfig.SetVariable("var", "value1")
+	config.LocalConfig.SetVariable("host", "127.0.0.1")
+	json.Set("http://$host/api/endpoint", "url")
+	params.Set("$var", "option2")
+	ep, _ = LoadBytes(json.Bytes())
+	expectedUrl = "http://127.0.0.1/api/endpoint?option1=3&option2=value1"
+	if ep.RequestURL() != expectedUrl {
+		t.Errorf("Request URL missmatch:\nExpecting: %s\nReceived: %s", expectedUrl,
+			ep.RequestURL())
+	}
+
 }
 
 func TestHeaders(t *testing.T) {
-	config := buildConfig()
-	config.Object("headers")
-	config.Set("application/json", "headers", "Content-Type")
-	ep, err := LoadBytes(config.Bytes())
+	epConfig := buildConfig()
+	epConfig.Object("headers")
+	epConfig.Set("application/json", "headers", "Content-Type")
+	epConfig.Set("$var", "headers", "x-custom")
+	config.LocalConfig.SetVariable("var", "value1")
+	ep, err := LoadBytes(epConfig.Bytes())
 	if err != nil {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
 
 	headerMap := ep.Headers()
-	headerValues := headerMap["Content-Type"]
-	if len(headerValues) == 0 {
-		t.Fatalf("No headers returned")
-	}
-
-	if headerValues[0] != "application/json" {
+	contentTypeValues := headerMap["Content-Type"]
+	if contentTypeValues[0] != "application/json" {
 		t.Errorf("Header not stored or retrieved correctly")
 	}
+
+	customValues := headerMap["x-custom"]
+	if customValues[0] != "value1" {
+		t.Errorf("Header not stored or retrieved correctly")
+	}
+
 }
 
 func TestRequestMethod(t *testing.T) {
-	config := buildConfig()
-	config.Set("get", "method")
-	ep, err := LoadBytes(config.Bytes())
+	epConfig := buildConfig()
+	epConfig.Set("get", "method")
+	ep, err := LoadBytes(epConfig.Bytes())
 	if err != nil {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
 	if ep.RequestMethod() != "GET" {
 		eFormat := "RequestMethod() returned %s instead of %s"
 		t.Errorf(eFormat, ep.RequestMethod(), "GET")
+	}
+	config.LocalConfig.SetVariable("method", "POST")
+	epConfig.Set("$method", "method")
+	ep, err = LoadBytes(epConfig.Bytes())
+	if err != nil {
+		t.Fatalf("Error reading config: %s", err.Error())
+	}
+	if ep.RequestMethod() != "POST" {
+		t.Fatalf("String expansion for request method failed\n%s\n", "POST",
+			ep.RequestMethod())
+	}
+}
+
+func TestRequestData(t *testing.T) {
+	config.LocalConfig.SetVariable("var", "123")
+	configStr := `
+		{
+			"method": "POST",
+			"url": "http://localhost:8081/api/cool",
+			"data": {
+				"dynamic": "$var"
+			}
+		}
+	`
+	ep, err := LoadBytes([]byte(configStr))
+	if err != nil {
+		t.Fatal("Error loading config: %s", err.Error())
+	}
+	parsedData, _ := gabs.ParseJSON(ep.RequestData())
+	v := parsedData.Path("dynamic").Data().(string)
+	if v != "123" {
+		t.Errorf("String expansion failed\n%s\n%s", v, "123")
 	}
 }

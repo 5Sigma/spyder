@@ -30,7 +30,7 @@ func Do(config *endpoint.EndpointConfig) (*Response, error) {
 	)
 
 	if config.Method == "POST" || config.Method == "HEAD" {
-		requestData = config.GetJSONBytes("data")
+		requestData = config.RequestData()
 		if err != nil {
 			return nil, err
 		}

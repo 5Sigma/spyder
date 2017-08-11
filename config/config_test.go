@@ -43,3 +43,30 @@ func TestSetVariable(t *testing.T) {
 		t.Errorf("Variable not set correctly: %s", v)
 	}
 }
+
+func TestGetVariable(t *testing.T) {
+	LocalConfig.SetVariable("getVal", "local")
+	GlobalConfig.SetVariable("getVal", "global")
+	GlobalConfig.SetVariable("another", "global")
+	str := ExpandString("Value is '$getVal'")
+	expected := "Value is 'local'"
+	if str != expected {
+		t.Errorf("Expanded value not correct\nReceived: %s\nExepcted:%s", str,
+			expected)
+	}
+}
+
+func TestVariableExists(t *testing.T) {
+	LocalConfig.SetVariable("getVal", "local")
+	GlobalConfig.SetVariable("getVal", "global")
+	GlobalConfig.SetVariable("another", "global")
+	if !VariableExists("getVal") {
+		t.Errorf("Variablle getVar should exist")
+	}
+	if !VariableExists("another") {
+		t.Errorf("Variablle another should exist")
+	}
+	if VariableExists("nope") {
+		t.Errorf("Variablle nope should not exist")
+	}
+}
