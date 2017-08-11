@@ -107,7 +107,7 @@ func (ep *EndpointConfig) RequestMethod() string {
 // RequestURL - returns the full url for the request. If this is a GET request
 // and has request parameters they are included in the URL.
 func (ep *EndpointConfig) RequestURL() string {
-	if ep.Method == "GET" {
+	if ep.RequestMethod() == "GET" {
 		baseURL, _ := url.Parse(config.ExpandString(ep.Url))
 		params := url.Values{}
 		for k, v := range ep.GetRequestParams() {
