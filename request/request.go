@@ -9,18 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path"
-	"strings"
 	"time"
-)
-
-type (
-	Response struct {
-		Response    *http.Response
-		RequestTime time.Duration
-		Content     []byte
-		Request     *http.Request
-		Payload     []byte
-	}
 )
 
 func Do(epConfig *endpoint.EndpointConfig) (*Response, error) {
@@ -39,13 +28,16 @@ func Do(epConfig *endpoint.EndpointConfig) (*Response, error) {
 		}
 	}
 
+	scriptEngine.SetPayload(requestData)
+
 	// Perform transformation
 	// executes scripts with the payload set so that they are capable of modifying
 	// it before the request is made.
 	if len(epConfig.Transform) > 0 {
 		for _, transform := range epConfig.Transform {
 			scriptPath := path.Join(config.ProjectPath, "scripts", transform) + ".js"
-			requestData = scriptEngine.ExecuteTransform(scriptPath, requestData)
+			scriptEngine.ExecuteFile(scriptPath)
+			requestData = scriptEngine.Payload
 		}
 	}
 
@@ -93,9 +85,4 @@ func Do(epConfig *endpoint.EndpointConfig) (*Response, error) {
 	}
 
 	return res, nil
-}
-
-func (res *Response) IsResponseJSON() bool {
-	contentType := strings.ToLower(res.Response.Header.Get("Content-Type"))
-	return strings.Contains(contentType, "json")
 }
