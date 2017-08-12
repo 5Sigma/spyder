@@ -20,6 +20,14 @@ type (
 	}
 )
 
+func New() *EndpointConfig {
+	return &EndpointConfig{
+		json:       &gabs.Container{},
+		OnComplete: []string{},
+		Transform:  []string{},
+	}
+}
+
 // Load - Loads a confugruation from a file on the disk.
 func Load(filename string) (*EndpointConfig, error) {
 	var (
@@ -80,7 +88,10 @@ func (ep *EndpointConfig) GetString(path string) string {
 
 // GetJSONString - returns the inner JSON at the path as a string.
 func (ep *EndpointConfig) GetJSONString(path string) string {
-	return ep.json.Path("data").String()
+	if ep.json.Exists("data") {
+		return ep.json.Path("data").String()
+	}
+	return ""
 }
 
 // GetJSONBytes - returns the inner JSON at the path as a byte array.

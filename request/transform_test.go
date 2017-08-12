@@ -14,7 +14,6 @@ func TestTransform(t *testing.T) {
 			bytes, _ := ioutil.ReadAll(r.Body)
 			json, _ := gabs.ParseJSON(bytes)
 			val, _ := json.Path("var").Data().(string)
-			println(json.String())
 			if val != "hello" {
 				t.Errorf("Request was not transformed: %s", val)
 			}
@@ -31,9 +30,9 @@ func TestTransform(t *testing.T) {
 		}
 	`, ts.URL)
 	transform := `
-		var payload = JSON.parse($payload.get());
+		var payload = JSON.parse($request.body);
 		payload.var = "hello";
-		$payload.set(JSON.stringify(payload));
+		$request.setBody(JSON.stringify(payload));
 	`
 	createFile("testdata/scripts/transform.js", transform)
 	_, err := Do(epConfig)
