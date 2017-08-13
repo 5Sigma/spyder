@@ -203,3 +203,14 @@ $request.headers.set('Authorization', $variables.get('session_token_id') + ':' +
 ```
 
 For more information on scripting see the [Scripting Reference](https://github.com/5Sigma/spyder/wiki/Script-Reference)
+
+
+# Stress testing
+
+Endpoints can be rapidly requested for stress testing using the `hammer`
+command.  The request will be made a number of times specified by the count
+flag, or 100 times by default. 
+
+```
+spyder hammer --count 1000 myEndpoint
+```
