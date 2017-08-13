@@ -22,3 +22,12 @@ fpm:
   formats:
     - deb
     - rpm
+snapcraft:
+  name: spyder
+  summary: API testing and request utility for the console
+  description: |
+    Spyder makes requesting API endpoints easy. You define an API using simple
+    configuration files and tasks. These files can then be versioned making
+    collaboration easy and painless.
+  grade: stable
+  confinement: strict
