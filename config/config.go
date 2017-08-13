@@ -75,8 +75,12 @@ func loadConfigFile(filename string) *Config {
 		bytes, _ := ioutil.ReadFile(filename)
 		if strings.TrimSpace(string(bytes)) == "" {
 			c = loadDefaultConfig()
+			c.Filename = filename
+			return c
 		}
 		c = LoadConfig(bytes)
+		c.Filename = filename
+		return c
 	}
 	c = loadDefaultConfig()
 	c.Filename = filename

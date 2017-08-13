@@ -34,7 +34,6 @@ $ spyder request sessions/auth
 		if err != nil {
 			output.PrintFatal(err)
 		}
-
 		explorer.Start(args[0], config, res)
 
 	},
