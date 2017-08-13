@@ -1,9 +1,30 @@
 [![Build
 Status](https://travis-ci.org/5Sigma/spyder.svg?branch=master)](https://travis-ci.org/5Sigma/spyder)
 
-# spyder
+# Spyder
 API Testing and Request Framework
 
+## Installation
+
+### OSX
+
+On OSX, spyder can be install with brew:
+
+```
+brew install 5sigma/tap/spyder
+```
+
+### Linux 
+
+Download the linux package from for the latest release:
+
+https://github.com/5Sigma/spyder/releases/latest
+
+### Windows
+
+Windows binaries can be found in the release:
+
+https://github.com/5Sigma/spyder/releases/latest
 
 ## API Testing and Requests
 
@@ -175,6 +196,8 @@ This request uses a transform script located at `scripts/signRequest.js`. That
 could look like:
 
 ```js
-signature = $hmac($variables.get('session_token_secret'), $payload.get());
-$headers.set('Authorization', $variables.get('session_token_id') + ':' + signature)
+signature = $hmac($variables.get('session_token_secret'), $request.body);
+$request.headers.set('Authorization', $variables.get('session_token_id') + ':' + signature)
 ```
+
+For more information on scripting see the [Scripting Reference](https://github.com/5Sigma/spyder/wiki/Script-Reference)
