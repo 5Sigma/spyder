@@ -48,6 +48,5 @@ func expandFakes(str string) string {
 			str = strings.Replace(str, fmt.Sprintf("#{%s}", match[1]), v, 1)
 		}
 	}
-	println("replacing ", str)
 	return str
 }

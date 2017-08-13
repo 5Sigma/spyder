@@ -76,7 +76,7 @@ func TestHeaders(t *testing.T) {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
 
-	headerMap := ep.Headers()
+	headerMap := ep.Headers
 	contentTypeValues := headerMap["Content-Type"]
 	if contentTypeValues[0] != "application/json" {
 		t.Errorf("Header not stored or retrieved correctly")
