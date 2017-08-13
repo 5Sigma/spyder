@@ -96,6 +96,8 @@ For POST requests the node is submitted as stringified JSON in the post body.
   }
 ```
 
+For more information about endpoints check out the [Endpoint Configuration Reference](https://github.com/5Sigma/spyder/wiki/Endpoint-Configuration-Reference)
+
 ## Handling dynamic data
 
 The easiest way of handling dynamic data is by using variables directly inside
