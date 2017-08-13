@@ -1,30 +1,9 @@
 [![Build
 Status](https://travis-ci.org/5Sigma/spyder.svg?branch=master)](https://travis-ci.org/5Sigma/spyder)
 
-# Spyder
+# spyder
 API Testing and Request Framework
 
-## Installation
-
-### OSX
-
-On OSX, spyder can be install with brew:
-
-```
-brew install 5sigma/tap/spyder
-```
-
-### Linux 
-
-Download the linux package from for the latest release:
-
-https://github.com/5Sigma/spyder/releases/latest
-
-### Windows
-
-Windows binaries can be found in the release:
-
-https://github.com/5Sigma/spyder/releases/latest
 
 ## API Testing and Requests
 
@@ -96,7 +75,7 @@ For POST requests the node is submitted as stringified JSON in the post body.
   }
 ```
 
-For more information about endpoints check out the [Endpoint Configuration Reference](https://github.com/5Sigma/spyder/wiki/Endpoint-Configuration-Reference)
+## Handling dynamic data
 
 The easiest way of handling dynamic data is by using variables directly inside
 the configuration. There are two configuration files: 
@@ -196,21 +175,6 @@ This request uses a transform script located at `scripts/signRequest.js`. That
 could look like:
 
 ```js
-signature = $hmac($variables.get('session_token_secret'), $request.body);
-$request.headers.set('Authorization', $variables.get('session_token_id') + ':' + signature)
+signature = $hmac($variables.get('session_token_secret'), $payload.get());
+$headers.set('Authorization', $variables.get('session_token_id') + ':' + signature)
 ```
-
-For more information on scripting see the [Scripting Reference](https://github.com/5Sigma/spyder/wiki/Script-Reference)
-
-
-# Stress testing
-
-Endpoints can be rapidly requested for stress testing using the `hammer`
-command.  The request will be made a number of times specified by the count
-flag, or 100 times by default. 
-
-```
-spyder hammer --count 1000 myEndpoint
-```
-
-For more information on scripting see the [Scripting Reference](https://github.com/5Sigma/spyder/wiki/Script-Reference)

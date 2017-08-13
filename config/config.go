@@ -23,9 +23,6 @@ var LocalConfig = loadConfigFile("config.local.json")
 // GlobalConfig - The global configuration read from config.json
 var GlobalConfig = loadConfigFile("config.json")
 
-// The path to the project root
-var ProjectPath = "."
-
 // InMemory - When true the config will not write to the disk. This is used for
 // testing.
 var InMemory = false
@@ -64,27 +61,15 @@ func ExpandString(str string) string {
 
 // LoadConfigFile - Loads a config from a file on the disk.
 func loadConfigFile(filename string) *Config {
-	var (
-		c *Config
-	)
 	if InMemory {
 		return loadDefaultConfig()
 	}
 
 	if _, err := os.Stat(filename); !os.IsNotExist(err) {
 		bytes, _ := ioutil.ReadFile(filename)
-		if strings.TrimSpace(string(bytes)) == "" {
-			c = loadDefaultConfig()
-			c.Filename = filename
-			return c
-		}
-		c = LoadConfig(bytes)
-		c.Filename = filename
-		return c
+		return LoadConfig(bytes)
 	}
-	c = loadDefaultConfig()
-	c.Filename = filename
-	return c
+	return loadDefaultConfig()
 }
 
 // Loads a config from a byte array.

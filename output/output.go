@@ -57,9 +57,8 @@ func PrintJson(contentBytes []byte) {
 	re := regexp.MustCompile(`([\[\]\{\}]{1})`)
 	content = re.ReplaceAllString(content, fmt.Sprintf("%s$1%s", chalk.Green, chalk.Reset))
 
-	// String values
-	re = regexp.MustCompile(`(\s*?\")([^:]*?)(\"\s*?,?\n)`)
-	content = re.ReplaceAllString(content, fmt.Sprintf("$1%s$2%s$3", chalk.Blue, chalk.Reset))
+	re = regexp.MustCompile(`:\s*\"(.*)\"`)
+	content = re.ReplaceAllString(content, fmt.Sprintf(": \"%s$1%s\"", chalk.Blue, chalk.Reset))
 
 	re = regexp.MustCompile(`(\:\s*[true|false]+\s*[,\n])`)
 	content = re.ReplaceAllString(content, fmt.Sprintf("%s$1%s", chalk.Magenta, chalk.Reset))

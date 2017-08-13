@@ -41,8 +41,7 @@ func TestRequestUrl(t *testing.T) {
 	}
 
 	// POST request
-	json.Set("post", "method")
-	ep, _ = LoadBytes(json.Bytes())
+	ep.Method = "POST"
 	if ep.RequestURL() != ep.Url {
 		t.Errorf("Request URL missmatch:\nExpecting: %s\nReceived: %s", ep.Url,
 			ep.RequestURL())
@@ -51,11 +50,8 @@ func TestRequestUrl(t *testing.T) {
 	// GET request with variable expansion
 	config.LocalConfig.SetVariable("var", "value1")
 	config.LocalConfig.SetVariable("host", "127.0.0.1")
-	json = buildConfig()
-	params, _ = json.Object("data")
-	params.Set("$var", "option2")
-	params.Set("3", "option1")
 	json.Set("http://$host/api/endpoint", "url")
+	params.Set("$var", "option2")
 	ep, _ = LoadBytes(json.Bytes())
 	expectedUrl = "http://127.0.0.1/api/endpoint?option1=3&option2=value1"
 	if ep.RequestURL() != expectedUrl {
@@ -76,7 +72,7 @@ func TestHeaders(t *testing.T) {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
 
-	headerMap := ep.Headers
+	headerMap := ep.Headers()
 	contentTypeValues := headerMap["Content-Type"]
 	if contentTypeValues[0] != "application/json" {
 		t.Errorf("Header not stored or retrieved correctly")
