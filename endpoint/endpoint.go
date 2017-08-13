@@ -17,6 +17,7 @@ type (
 		Url        string
 		OnComplete []string
 		Transform  []string
+		Headers    map[string][]string
 	}
 )
 
@@ -59,12 +60,19 @@ func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 	method, _ := jsonObject.Path("method").Data().(string)
 	url, _ := jsonObject.Path("url").Data().(string)
 
+	headerMap := make(map[string][]string)
+	children, _ := jsonObject.S("headers").ChildrenMap()
+	for key, child := range children {
+		headerMap[key] = []string{config.ExpandString(child.Data().(string))}
+	}
+
 	epConfig = &EndpointConfig{
 		json:       jsonObject,
 		Method:     method,
 		Url:        url,
 		OnComplete: []string{},
 		Transform:  []string{},
+		Headers:    headerMap,
 	}
 
 	transformNodes, _ := jsonObject.S("transform").Children()
@@ -97,16 +105,6 @@ func (ep *EndpointConfig) GetJSONString(path string) string {
 // GetJSONBytes - returns the inner JSON at the path as a byte array.
 func (ep *EndpointConfig) GetJSONBytes(path string) []byte {
 	return ep.json.Path("data").Bytes()
-}
-
-// Headers - returns the configured request headers as a string map
-func (ep *EndpointConfig) Headers() map[string][]string {
-	headerMap := make(map[string][]string)
-	children, _ := ep.json.S("headers").ChildrenMap()
-	for key, child := range children {
-		headerMap[key] = []string{config.ExpandString(child.Data().(string))}
-	}
-	return headerMap
 }
 
 // RequestMethod - returns the request method.

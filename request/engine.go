@@ -186,7 +186,11 @@ func (engine *ScriptEngine) getReqHeader(call otto.FunctionCall) otto.Value {
 func (engine *ScriptEngine) setReqHeader(call otto.FunctionCall) otto.Value {
 	headerName, _ := call.Argument(0).ToString()
 	headerValue, _ := call.Argument(1).ToString()
-	engine.Request.Header.Set(headerName, headerValue)
+	if engine.Request != nil {
+		engine.Request.Header.Set(headerName, headerValue)
+	} else {
+		engine.EndpointConfig.Headers[headerName] = []string{headerValue}
+	}
 	return otto.Value{}
 }
 

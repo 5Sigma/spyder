@@ -44,7 +44,7 @@ func Do(epConfig *endpoint.EndpointConfig) (*Response, error) {
 	req, err = http.NewRequest(epConfig.RequestMethod(),
 		epConfig.RequestURL(), bytes.NewReader(requestData))
 
-	req.Header = epConfig.Headers()
+	req.Header = epConfig.Headers
 
 	scriptEngine.Request = req
 
