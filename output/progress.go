@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// ProgressBar - A structure that controls displaying a progress bar in the
+// console.
 type ProgressBar struct {
 	writer    *uilive.Writer
 	Max       int
@@ -14,6 +16,7 @@ type ProgressBar struct {
 	startTime time.Time
 }
 
+// NewProgress - Creates a new progress bar with a given maximum value.
 func NewProgress(max int) *ProgressBar {
 	writer := uilive.New()
 	writer.Start()
@@ -24,6 +27,7 @@ func NewProgress(max int) *ProgressBar {
 	}
 }
 
+// Inc - Increments the current value by one.
 func (bar *ProgressBar) Inc() {
 	bar.Current++
 	bar.write()
@@ -32,10 +36,13 @@ func (bar *ProgressBar) Inc() {
 	}
 }
 
+// Stop - Stops the progress bar rendering. This is automatically called if the
+// current value reaches the maximum.
 func (bar *ProgressBar) Stop() {
 	bar.writer.Stop()
 }
 
+// write - Writes the progress bar line to the console.
 func (bar *ProgressBar) write() {
 	elapsed := time.Since(bar.startTime)
 	perc := (float64(bar.Current) / float64(bar.Max)) * float64(10)
