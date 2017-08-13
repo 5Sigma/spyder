@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
 	"github.com/5sigma/spyder/explorer"
 	"github.com/5sigma/spyder/output"
@@ -24,7 +25,7 @@ requested using:
 $ spyder request sessions/auth
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := endpoint.Load(path.Join("endpoints", args[0]+".json"))
+		config, err := endpoint.Load(path.Join(config.ProjectPath, "endpoints", args[0]+".json"))
 		if err != nil {
 			output.PrintFatal(err)
 		}
@@ -33,7 +34,6 @@ $ spyder request sessions/auth
 		if err != nil {
 			output.PrintFatal(err)
 		}
-
 		explorer.Start(args[0], config, res)
 
 	},

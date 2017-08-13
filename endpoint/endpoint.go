@@ -17,8 +17,17 @@ type (
 		Url        string
 		OnComplete []string
 		Transform  []string
+		Headers    map[string][]string
 	}
 )
+
+func New() *EndpointConfig {
+	return &EndpointConfig{
+		json:       &gabs.Container{},
+		OnComplete: []string{},
+		Transform:  []string{},
+	}
+}
 
 // Load - Loads a confugruation from a file on the disk.
 func Load(filename string) (*EndpointConfig, error) {
@@ -51,12 +60,19 @@ func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 	method, _ := jsonObject.Path("method").Data().(string)
 	url, _ := jsonObject.Path("url").Data().(string)
 
+	headerMap := make(map[string][]string)
+	children, _ := jsonObject.S("headers").ChildrenMap()
+	for key, child := range children {
+		headerMap[key] = []string{config.ExpandString(child.Data().(string))}
+	}
+
 	epConfig = &EndpointConfig{
 		json:       jsonObject,
 		Method:     method,
 		Url:        url,
 		OnComplete: []string{},
 		Transform:  []string{},
+		Headers:    headerMap,
 	}
 
 	transformNodes, _ := jsonObject.S("transform").Children()
@@ -80,22 +96,15 @@ func (ep *EndpointConfig) GetString(path string) string {
 
 // GetJSONString - returns the inner JSON at the path as a string.
 func (ep *EndpointConfig) GetJSONString(path string) string {
-	return ep.json.Path("data").String()
+	if ep.json.Exists("data") {
+		return ep.json.Path("data").String()
+	}
+	return ""
 }
 
 // GetJSONBytes - returns the inner JSON at the path as a byte array.
 func (ep *EndpointConfig) GetJSONBytes(path string) []byte {
 	return ep.json.Path("data").Bytes()
-}
-
-// Headers - returns the configured request headers as a string map
-func (ep *EndpointConfig) Headers() map[string][]string {
-	headerMap := make(map[string][]string)
-	children, _ := ep.json.S("headers").ChildrenMap()
-	for key, child := range children {
-		headerMap[key] = []string{config.ExpandString(child.Data().(string))}
-	}
-	return headerMap
 }
 
 // RequestMethod - returns the request method.
@@ -107,8 +116,8 @@ func (ep *EndpointConfig) RequestMethod() string {
 // RequestURL - returns the full url for the request. If this is a GET request
 // and has request parameters they are included in the URL.
 func (ep *EndpointConfig) RequestURL() string {
-	if ep.Method == "GET" {
-		baseURL, _ := url.Parse(config.ExpandString(ep.Url))
+	if ep.RequestMethod() == "GET" {
+		baseURL, _ := url.Parse(expandFakes(config.ExpandString(ep.Url)))
 		params := url.Values{}
 		for k, v := range ep.GetRequestParams() {
 			params.Add(k, v)
@@ -129,7 +138,7 @@ func (ep *EndpointConfig) GetRequestParams() map[string]string {
 	paramsMap := make(map[string]string)
 	children, _ := ep.json.S("data").ChildrenMap()
 	for key, child := range children {
-		paramsMap[key] = config.ExpandString(child.Data().(string))
+		paramsMap[key] = expandFakes(config.ExpandString(child.Data().(string)))
 	}
 	return paramsMap
 }
@@ -137,7 +146,9 @@ func (ep *EndpointConfig) GetRequestParams() map[string]string {
 // RequestData - returns the data attribute from the config. This contains the
 // payload, for a POST request, that will be sent to the server.
 func (ep *EndpointConfig) RequestData() []byte {
-	dataJSON := config.ExpandString(ep.GetJSONString("data"))
+	dataJSON := ep.GetJSONString("data")
+	dataJSON = config.ExpandString(dataJSON)
+	dataJSON = expandFakes(dataJSON)
 	return []byte(dataJSON)
 }
 

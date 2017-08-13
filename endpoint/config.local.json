@@ -1,0 +1,7 @@
+{
+  "variables": {
+    "host": "127.0.0.1",
+    "method": "POST",
+    "var": "123"
+  }
+}

@@ -18,7 +18,7 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 	shell.Prompt = prompt
 
 	shell.AddCommand(&gshell.Command{
-		Name:        "body",
+		Name:        "response.body",
 		Description: "Displays the content received from the server.",
 		Call: func(sh *gshell.Shell, args []string) {
 			if res.IsResponseJSON() {
@@ -51,7 +51,7 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 	})
 
 	shell.AddCommand(&gshell.Command{
-		Name:        "payload",
+		Name:        "request.body",
 		Description: "Displays the post data sent in the request",
 		Call: func(sh *gshell.Shell, args []string) {
 			switch res.Request.Header.Get("Content-Type") {
@@ -86,7 +86,8 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 	})
 
 	shell.AddCommand(&gshell.Command{
-		Name: "refresh",
+		Name:        "refresh",
+		Description: "Makes the request again and reloads all data.",
 		Call: func(sh *gshell.Shell, args []string) {
 			newRes, err := request.Do(config)
 			if err != nil {
@@ -98,7 +99,8 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 	})
 
 	shell.AddCommand(&gshell.Command{
-		Name: "headers",
+		Name:        "response.headers",
+		Description: "Displays the headers recieved from the server",
 		Call: func(sh *gshell.Shell, args []string) {
 			for key, value := range res.Response.Header {
 				output.PrintProperty(key, value[0])
@@ -112,7 +114,8 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 	})
 
 	shell.AddCommand(&gshell.Command{
-		Name: "headers:sent",
+		Name:        "request.headers",
+		Description: "Displays the headers sent to the server",
 		Call: func(sh *gshell.Shell, args []string) {
 			for key, value := range res.Request.Header {
 				if len(value) == 0 {
@@ -130,5 +133,9 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 		},
 	})
 
+	fmt.Println("")
+	shell.ProcessLine("response")
+	fmt.Println("")
+	shell.ProcessLine("response.body")
 	shell.Start()
 }
