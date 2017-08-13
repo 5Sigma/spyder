@@ -212,3 +212,5 @@ flag, or 100 times by default.
 ```
 spyder hammer --count 1000 myEndpoint
 ```
+
+For more information on scripting see the [Scripting Reference](https://github.com/5Sigma/spyder/wiki/Script-Reference)
