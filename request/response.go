@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// Response - Helper object returned from making a request. It holds all the
+// relevant request/response data.
 type (
 	Response struct {
 		Response    *http.Response

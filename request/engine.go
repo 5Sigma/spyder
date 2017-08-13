@@ -85,15 +85,10 @@ func (eng *ScriptEngine) SetResponse(res *Response) {
 // SetRequest - Sets the request on the engine. This also builds the functions
 // to expose the request to scripts.
 func (engine *ScriptEngine) SetRequest(request *http.Request) {
-	engine.Request = request
-	reqVal, _ := engine.VM.Get("$request")
+	eng.Request = request
+	reqVal, _ := eng.VM.Get("$request")
 	reqObj := reqVal.Object()
 	reqObj.Set("contentLength", request.ContentLength)
-}
-
-// SetRequestConfig - Sets various properties of the exposed $request object
-// using the endpoint configuration.
-func (eng *ScriptEngine) SetEndpointConfig(epConf *endpoint.EndpointConfig) {
 }
 
 // SetPayload - Sets the request payload on the engine. Also exposes it to
@@ -106,7 +101,7 @@ func (engine *ScriptEngine) SetPayload(payload []byte) {
 }
 
 //Execute - Executes a Javascript.
-func (eng *ScriptEngine) Execute(script string) error {
+func (engine *ScriptEngine) Execute(script string) error {
 	_, err := eng.VM.Run(script)
 	if err != nil {
 		println(err.Error())

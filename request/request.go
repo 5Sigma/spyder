@@ -2,7 +2,6 @@ package request
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
@@ -12,6 +11,9 @@ import (
 	"time"
 )
 
+// Do - Performs the request for a given endpoint configuration. This will
+// expand all variables, fake data, and execute any transforms and onComplete
+// scripts specified.
 func Do(epConfig *endpoint.EndpointConfig) (*Response, error) {
 	var (
 		client       = &http.Client{}
@@ -78,8 +80,8 @@ func Do(epConfig *endpoint.EndpointConfig) (*Response, error) {
 			scriptPath := path.Join(config.ProjectPath, "scripts", onComplete) + ".js"
 			err := scriptEngine.ExecuteFile(scriptPath)
 			if err != nil {
-				return res, errors.New(fmt.Sprintf("Error parsing script (%s): %s",
-					scriptPath, err.Error()))
+				return res, fmt.Errorf("Error parsing script (%s): %s",
+					scriptPath, err.Error())
 			}
 		}
 	}
