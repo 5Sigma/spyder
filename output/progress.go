@@ -46,8 +46,8 @@ func (bar *ProgressBar) Stop() {
 func (bar *ProgressBar) write() {
 	elapsed := time.Since(bar.startTime)
 	perc := (float64(bar.Current) / float64(bar.Max)) * float64(10)
-	barStr := strings.Repeat("⚪", 10)
-	barStr = strings.Replace(barStr, "⚪", "⚫", int(perc))
+	barStr := strings.Repeat("-", 10)
+	barStr = strings.Replace(barStr, "-", "=", int(perc))
 	line := fmt.Sprintf("[%d/%d] %s %s", bar.Current, bar.Max, barStr, elapsed)
 	fmt.Fprintln(bar.writer, line)
 }

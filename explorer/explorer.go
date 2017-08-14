@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/5sigma/gshell"
+	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
 	"github.com/5sigma/spyder/output"
 	"github.com/5sigma/spyder/request"
@@ -12,10 +13,14 @@ import (
 	"github.com/ttacon/chalk"
 )
 
-func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Response) {
+func Start(endpointPath string, epConfig *endpoint.EndpointConfig, res *request.Response) {
 	shell := gshell.New()
 	prompt := fmt.Sprintf("%s%s%s> ", chalk.Yellow, endpointPath, chalk.Reset)
 	shell.Prompt = prompt
+	if config.GetSetting("vimMode") == "true" {
+		println("Enabling vim mode")
+		shell.VimMode = true
+	}
 
 	shell.AddCommand(&gshell.Command{
 		Name:        "response.body",
@@ -24,7 +29,7 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 			if res.IsResponseJSON() {
 				output.PrintJson(res.Content)
 			} else {
-				fmt.Println(string(res.Content))
+				output.Println(string(res.Content))
 			}
 		},
 	})
@@ -58,7 +63,7 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 			case "application/json":
 				output.PrintJson(res.Payload)
 			default:
-				fmt.Println(string(res.Payload))
+				output.Println(string(res.Payload))
 			}
 		},
 	})
@@ -89,7 +94,7 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 		Name:        "refresh",
 		Description: "Makes the request again and reloads all data.",
 		Call: func(sh *gshell.Shell, args []string) {
-			newRes, err := request.Do(config)
+			newRes, err := request.Do(epConfig)
 			if err != nil {
 				output.PrintError(err)
 			}
@@ -133,9 +138,9 @@ func Start(endpointPath string, config *endpoint.EndpointConfig, res *request.Re
 		},
 	})
 
-	fmt.Println("")
+	output.Println("")
 	shell.ProcessLine("response")
-	fmt.Println("")
+	output.Println("")
 	shell.ProcessLine("response.body")
 	shell.Start()
 }

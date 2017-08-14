@@ -1,6 +1,7 @@
 package output
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -10,6 +11,10 @@ import (
 	"strings"
 )
 
+var PromptStream *os.File
+
+var SupressOutput = false
+
 func PrintResult(desc string, err error) {
 	resultColor := chalk.Red
 	resultText := "FAIL"
@@ -18,12 +23,12 @@ func PrintResult(desc string, err error) {
 		resultText = "OK"
 	}
 	desc += strings.Repeat(" ", 50-len(desc))
-	fmt.Println(chalk.White, desc, chalk.Yellow, "[", resultColor, resultText,
+	Println(chalk.White, desc, chalk.Yellow, "[", resultColor, resultText,
 		chalk.Yellow, "]", chalk.Reset)
 }
 
 func PrintError(err error) {
-	fmt.Println(chalk.Red, err.Error(), chalk.Reset)
+	Println(chalk.Red, err.Error(), chalk.Reset)
 }
 
 func PrintFatal(err error) {
@@ -34,10 +39,10 @@ func PrintFatal(err error) {
 func PrintProperty(name, value string) {
 	totalLength := len(name) + len(value)
 	if totalLength > 60 {
-		fmt.Println(chalk.Yellow, name, "\n", chalk.White, value, chalk.Reset)
+		Println(chalk.Yellow, name, "\n", chalk.White, value, chalk.Reset)
 	} else {
 		spaces := strings.Repeat(" ", 60-totalLength)
-		fmt.Println(chalk.Yellow, name, spaces, chalk.White, value, chalk.Reset)
+		Println(chalk.Yellow, name, spaces, chalk.White, value, chalk.Reset)
 	}
 }
 
@@ -70,5 +75,32 @@ func PrintJson(contentBytes []byte) {
 	re = regexp.MustCompile(`(\:\s*null\s*[,\n])`)
 	content = re.ReplaceAllString(content, fmt.Sprintf("%s$1%s", chalk.Red, chalk.Reset))
 
-	fmt.Println(content)
+	Println(content)
+}
+
+func Prompt(name, defaultValue string) string {
+	if PromptStream == nil {
+		PromptStream = os.Stdin
+	}
+	reader := bufio.NewReader(PromptStream)
+	Printf("%s%s [%s]: %s", chalk.Yellow, name, defaultValue, chalk.Reset)
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+	println(input)
+	if input == "" {
+		return defaultValue
+	}
+	return input
+}
+
+func Println(str ...interface{}) {
+	if SupressOutput == false {
+		fmt.Println(str...)
+	}
+}
+
+func Printf(str string, args ...interface{}) {
+	if SupressOutput == false {
+		fmt.Printf(str, args...)
+	}
 }

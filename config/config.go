@@ -23,6 +23,10 @@ var LocalConfig = loadConfigFile("config.local.json")
 // GlobalConfig - The global configuration read from config.json
 var GlobalConfig = loadConfigFile("config.json")
 
+// TempConfig - A temporary config object that persists only for the current
+// session.
+var TempConfig = loadDefaultConfig()
+
 // The path to the project root
 var ProjectPath = "."
 
@@ -32,6 +36,9 @@ var InMemory = false
 
 // VariableExists - Checks if a variable exists in either config.
 func VariableExists(str string) bool {
+	if TempConfig.VariableExists(str) {
+		return true
+	}
 	if LocalConfig.VariableExists(str) {
 		return true
 	}
@@ -44,6 +51,9 @@ func VariableExists(str string) bool {
 // GetVariable - Returns the value of a variable from either config. Priority
 // goes to the local config.
 func GetVariable(str string) string {
+	if TempConfig.VariableExists(str) {
+		return TempConfig.GetVariable(str)
+	}
 	if LocalConfig.VariableExists(str) {
 		return LocalConfig.GetVariable(str)
 	}
@@ -53,10 +63,23 @@ func GetVariable(str string) string {
 	return ""
 }
 
+// GetSetting - Returns the value of a variable from either config. Priority
+// goes to the local config.
+func GetSetting(str string) string {
+	if LocalConfig.SettingExists(str) {
+		return LocalConfig.GetSetting(str)
+	}
+	if GlobalConfig.SettingExists(str) {
+		return GlobalConfig.GetSetting(str)
+	}
+	return ""
+}
+
 // ExpandString - Given a string with a variable inside it. The string will be
 // expanded and the variable placeholders replaced with variables from either
 // config. Priority goes to the local config.
 func ExpandString(str string) string {
+	str = TempConfig.ExpandString(str)
 	str = LocalConfig.ExpandString(str)
 	str = GlobalConfig.ExpandString(str)
 	return str
@@ -136,6 +159,11 @@ func (c *Config) SetVariable(path, value string) {
 // VariableExists - Checks to see if a variable exists at the path specified.
 func (c *Config) VariableExists(path string) bool {
 	return c.json.ExistsP(fmt.Sprintf("variables.%s", path))
+}
+
+// SettingExists - returns true if a setting is specified in the config.
+func (c *Config) SettingExists(name string) bool {
+	return c.json.ExistsP(name)
 }
 
 // GetSetting - Returns a setting as a string from the path specified in the

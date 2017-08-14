@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
 	"github.com/5sigma/spyder/explorer"
@@ -25,20 +26,34 @@ requested using:
 $ spyder request sessions/auth
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := endpoint.Load(path.Join(config.ProjectPath, "endpoints", args[0]+".json"))
+		if len(args) == 0 {
+			cmd.Help()
+			output.PrintFatal(errors.New("No endpoint specified"))
+		}
+		epConfig, err := endpoint.Load(path.Join(config.ProjectPath, "endpoints", args[0]+".json"))
 		if err != nil {
 			output.PrintFatal(err)
 		}
-
-		res, err := request.Do(config)
+		for _, prompt := range epConfig.Prompts {
+			useDefaults, _ := cmd.Flags().GetBool("default")
+			if useDefaults {
+				config.TempConfig.SetVariable(prompt.Name, prompt.DefaultValue)
+			} else {
+				value := output.Prompt(prompt.Name, prompt.DefaultValue)
+				config.TempConfig.SetVariable(prompt.Name, value)
+			}
+		}
+		res, err := request.Do(epConfig)
 		if err != nil {
 			output.PrintFatal(err)
 		}
-		explorer.Start(args[0], config, res)
+		explorer.Start(args[0], epConfig, res)
 
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(runCmd)
+	runCmd.Flags().BoolP("default", "d", false,
+		"Use default values for all prompts")
 }

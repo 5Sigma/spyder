@@ -1,6 +1,7 @@
 package request
 
 import (
+	"github.com/5sigma/spyder/testhelper"
 	"github.com/Jeffail/gabs"
 	"io/ioutil"
 	"net/http"
@@ -19,7 +20,7 @@ func TestTransform(t *testing.T) {
 			}
 		}))
 	defer ts.Close()
-	epConfig := endpointConfig(`
+	epConfig := testhelper.EndpointConfig(`
 		{
 			"url": "%s",
 			"method": "post",
@@ -34,7 +35,7 @@ func TestTransform(t *testing.T) {
 		payload.var = "hello";
 		$request.setBody(JSON.stringify(payload));
 	`
-	createFile("testdata/scripts/transform.js", transform)
+	testhelper.CreateFile("testdata/scripts/transform.js", transform)
 	_, err := Do(epConfig)
 	if err != nil {
 		t.Errorf("Request error: %s", err.Error())

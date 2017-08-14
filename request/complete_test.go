@@ -2,11 +2,12 @@ package request
 
 import (
 	"github.com/5sigma/spyder/config"
+	"github.com/5sigma/spyder/testhelper"
 	"testing"
 )
 
 func TestOnComplete(t *testing.T) {
-	ts := testServer(`
+	ts := testhelper.RunTestServer(`
 				{
 					"inner": {
 						"value": "1234567890"
@@ -14,7 +15,7 @@ func TestOnComplete(t *testing.T) {
 				}
 			`)
 	defer ts.Close()
-	epConfig := endpointConfig(`
+	epConfig := testhelper.EndpointConfig(`
 		{
 			"url": "%s",
 			"method": "post",
@@ -24,7 +25,7 @@ func TestOnComplete(t *testing.T) {
 	var variableSave = `
 		$variables.set("var", JSON.parse($response.body).inner.value)
 	`
-	createFile("testdata/scripts/variableSave.js", variableSave)
+	testhelper.CreateFile("testdata/scripts/variableSave.js", variableSave)
 	_, err := Do(epConfig)
 	if err != nil {
 		t.Fatalf("Error making request: %s", err)

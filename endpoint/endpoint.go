@@ -18,6 +18,11 @@ type (
 		OnComplete []string
 		Transform  []string
 		Headers    map[string][]string
+		Prompts    []*Prompt
+	}
+	Prompt struct {
+		Name         string
+		DefaultValue string
 	}
 )
 
@@ -66,6 +71,17 @@ func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 		headerMap[key] = []string{config.ExpandString(child.Data().(string))}
 	}
 
+	promptsJson, _ := jsonObject.S("prompts").ChildrenMap()
+	prompts := []*Prompt{}
+	for key, child := range promptsJson {
+		var defaultValue = ""
+		if child.Exists("defaultValue") {
+			defaultValue = child.Path("defaultValue").Data().(string)
+		}
+		prompt := &Prompt{Name: key, DefaultValue: defaultValue}
+		prompts = append(prompts, prompt)
+	}
+
 	epConfig = &EndpointConfig{
 		json:       jsonObject,
 		Method:     method,
@@ -73,6 +89,7 @@ func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 		OnComplete: []string{},
 		Transform:  []string{},
 		Headers:    headerMap,
+		Prompts:    prompts,
 	}
 
 	transformNodes, _ := jsonObject.S("transform").Children()
@@ -162,4 +179,8 @@ func validate(json *gabs.Container) bool {
 		return false
 	}
 	return true
+}
+
+func (ep *EndpointConfig) String() string {
+	return ep.json.String()
 }

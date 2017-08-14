@@ -31,18 +31,29 @@ spyder hammer --count 100 myEndpoint`,
 
 		count, _ = cmd.Flags().GetInt("count")
 		if len(args) == 0 {
+			cmd.Help()
 			output.PrintFatal(errors.New("No endpoint specified"))
 		}
 
 		configPath := path.Join(config.ProjectPath, "endpoints", args[0]+".json")
-		config, err := endpoint.Load(configPath)
+		epConfig, err := endpoint.Load(configPath)
 		if err != nil {
 			output.PrintFatal(err)
 		}
 
+		for _, prompt := range epConfig.Prompts {
+			useDefaults, _ := cmd.Flags().GetBool("default")
+			if useDefaults {
+				config.TempConfig.SetVariable(prompt.Name, prompt.DefaultValue)
+			} else {
+				value := output.Prompt(prompt.Name, prompt.DefaultValue)
+				config.TempConfig.SetVariable(prompt.Name, value)
+			}
+		}
+
 		bar := output.NewProgress(count)
 		for i := 0; i <= count; i++ {
-			res, err := request.Do(config)
+			res, err := request.Do(epConfig)
 			if err != nil {
 				output.PrintFatal(err)
 			}
@@ -74,4 +85,6 @@ spyder hammer --count 100 myEndpoint`,
 func init() {
 	RootCmd.AddCommand(hammerCmd)
 	hammerCmd.PersistentFlags().Int("count", 100, "Request count")
+	hammerCmd.Flags().BoolP("default", "d", false,
+		"Use default values for all prompts")
 }
