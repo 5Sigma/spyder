@@ -153,9 +153,16 @@ func (ep *EndpointConfig) GetRequestParams() map[string]string {
 		return make(map[string]string)
 	}
 	paramsMap := make(map[string]string)
-	children, _ := ep.json.S("data").ChildrenMap()
+	children, err := ep.json.S("data").ChildrenMap()
+	if err != nil {
+		return paramsMap
+	}
 	for key, child := range children {
-		paramsMap[key] = expandFakes(config.ExpandString(child.Data().(string)))
+		childData, ok := child.Data().(string)
+		if ok {
+			paramsMap[key] = expandFakes(config.ExpandString(childData))
+		}
+
 	}
 	return paramsMap
 }
