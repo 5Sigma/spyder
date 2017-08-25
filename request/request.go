@@ -23,7 +23,7 @@ func Do(epConfig *endpoint.EndpointConfig) (*Response, error) {
 		scriptEngine = NewScriptEngine(epConfig)
 	)
 
-	if epConfig.RequestMethod() == "POST" || epConfig.RequestMethod() == "HEAD" {
+	if epConfig.RequestMethod() == "POST" || epConfig.RequestMethod() == "HEAD" || epConfig.RequestMethod() == "PUT" {
 		requestData = epConfig.RequestData()
 		if err != nil {
 			return nil, err
