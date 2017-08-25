@@ -40,9 +40,17 @@ default it generates the project in the current directory.`,
 		output.PrintResult("Created scripts folder",
 			createProjectFolder(projectPath, "scripts"))
 		output.PrintResult("Create global config",
-			writeFile("config.json", ""))
+			writeFile("config.json", `
+{
+	"variables": {}
+}
+			`))
 		output.PrintResult("Create local config",
-			writeFile("config.local.json", ""))
+			writeFile("config.local.json", `
+{
+	"variables": {}
+}
+		`))
 		output.PrintResult("Created project", nil)
 	},
 }
