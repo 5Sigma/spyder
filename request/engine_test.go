@@ -3,6 +3,7 @@ package request
 import (
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
+	"github.com/5sigma/spyder/testhelper"
 	"net/http"
 	"testing"
 )
@@ -74,5 +75,31 @@ func TestHeaders(t *testing.T) {
 			t.Fatal("Header not present")
 		}
 		t.Errorf("Header not set: %s", req.Header.Get("test-header2")[0])
+	}
+}
+
+func TestRequest(t *testing.T) {
+	ts := testhelper.RunEchoServer()
+	defer ts.Close()
+	epConfig := testhelper.EndpointConfig(`
+		{
+			"url": "%s",
+			"method": "POST",
+			"data": {
+				"outer": {
+					 "inner": "test"
+				}
+			}
+		}
+	`, ts.URL)
+	testhelper.CreateFile("testdata/endpoints/test.json", epConfig.String())
+	script := `
+	var res = $endpoint('test', { outer: { inner: { value: "1234567890" } } });
+	$debug(res.body.outer.inner.value);
+	`
+	scriptEngine := NewScriptEngine(epConfig)
+	scriptEngine.Execute(script)
+	if scriptEngine.Debug != "1234567890" {
+		t.Errorf("Body not set correctly: %s", scriptEngine.Debug)
 	}
 }

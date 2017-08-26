@@ -41,6 +41,7 @@ func CreateFile(fpath string, content string) error {
 func RunTestServer(response string) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
 			fmt.Fprintln(w, `
 				{
 					"inner": {
@@ -48,6 +49,15 @@ func RunTestServer(response string) *httptest.Server {
 					}
 				}
 			`)
+		}))
+}
+
+func RunEchoServer() *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			data, _ := ioutil.ReadAll(r.Body)
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(data)
 		}))
 }
 

@@ -176,6 +176,11 @@ func (ep *EndpointConfig) RequestData() []byte {
 	return []byte(dataJSON)
 }
 
+func (ep *EndpointConfig) SetRequestData(data map[string]interface{}) error {
+	ep.json.SetP(data, "data")
+	return nil
+}
+
 // validate - Validates that the configuration is valid and has the required
 // parameters.
 func validate(json *gabs.Container) bool {

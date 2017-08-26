@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
 	"github.com/robertkrimen/otto"
@@ -11,6 +12,7 @@ import (
 	_ "github.com/robertkrimen/otto/underscore"
 	"io/ioutil"
 	"net/http"
+	"path"
 )
 
 // ScriptEngine - A scripting engine used to execute hook scripts during the
@@ -50,7 +52,26 @@ func NewScriptEngine(endpointConfig *endpoint.EndpointConfig) *ScriptEngine {
 	headersObj.Set("get", eng.getReqHeader)
 	headersObj.Set("set", eng.setReqHeader)
 	reqObj.Set("setBody", eng.setPayload)
+	vm.Set("$endpoint", eng.requestEndpoint)
 
+	return eng
+}
+
+func NewTaskEngine() *ScriptEngine {
+
+	vm := otto.New()
+
+	eng := &ScriptEngine{
+		VM: vm,
+	}
+
+	varObj, _ := vm.Object("$variables = {}")
+	varObj.Set("set", eng.setLocalVar)
+	varObj.Set("get", eng.getVar)
+
+	vm.Set("$debug", eng.setDebug)
+	vm.Set("$hmac", eng.hmac)
+	vm.Set("$endpoint", eng.requestEndpoint)
 	return eng
 }
 
@@ -103,9 +124,6 @@ func (engine *ScriptEngine) SetPayload(payload []byte) {
 //Execute - Executes a Javascript.
 func (engine *ScriptEngine) Execute(script string) error {
 	_, err := engine.VM.Run(script)
-	if err != nil {
-		println(err.Error())
-	}
 	return err
 }
 
@@ -202,4 +220,36 @@ func (engine *ScriptEngine) setDebug(call otto.FunctionCall) otto.Value {
 	val, _ := call.Argument(0).ToString()
 	engine.Debug = val
 	return otto.Value{}
+}
+
+func (engine *ScriptEngine) requestEndpoint(call otto.FunctionCall) otto.Value {
+	epConfigFile, _ := call.Argument(0).ToString()
+	epConfig, err := endpoint.Load(path.Join(config.ProjectPath, "endpoints", epConfigFile+".json"))
+	if err != nil {
+		jsThrow(call, err)
+	}
+
+	if !call.Argument(1).IsUndefined() {
+		payload, _ := call.Argument(1).Export()
+		epConfig.SetRequestData(payload.(map[string]interface{}))
+	}
+
+	res, err := Do(epConfig)
+	if err != nil {
+		jsThrow(call, err)
+	}
+
+	returnObj, _ := engine.VM.Object("EP_RESULT={}")
+	if res.IsResponseJSON() {
+		contentData := make(map[string]interface{})
+		json.Unmarshal(res.Content, &contentData)
+		returnObj.Set("body", contentData)
+	} else {
+		returnObj.Set("body", string(res.Content))
+	}
+	returnObj.Set("headers", res.Response.Header)
+	returnObj.Set("status", res.Response.Status)
+	returnObj.Set("statusCode", res.Response.StatusCode)
+
+	return returnObj.Value()
 }

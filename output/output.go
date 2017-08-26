@@ -56,7 +56,7 @@ func PrintJson(contentBytes []byte) {
 	if err == nil {
 		content = string(out.Bytes())
 	} else {
-		println(err.Error())
+		PrintError(err)
 	}
 
 	re := regexp.MustCompile(`([\[\]\{\}]{1})`)
@@ -86,7 +86,6 @@ func Prompt(name, defaultValue string) string {
 	Printf("%s%s [%s]: %s", chalk.Yellow, name, defaultValue, chalk.Reset)
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
-	println(input)
 	if input == "" {
 		return defaultValue
 	}

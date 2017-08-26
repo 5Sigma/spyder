@@ -39,6 +39,8 @@ default it generates the project in the current directory.`,
 			createProjectFolder(projectPath, "config"))
 		output.PrintResult("Created scripts folder",
 			createProjectFolder(projectPath, "scripts"))
+		output.PrintResult("Created task folder",
+			createProjectFolder(projectPath, "tasks"))
 		output.PrintResult("Create global config",
 			writeFile("config.json", `
 {
