@@ -4,6 +4,7 @@ Status](https://travis-ci.org/5Sigma/spyder.svg?branch=master)](https://travis-c
 # Spyder
 API Testing and Request Framework
 
+
 ## Installation
 
 ### OSX
@@ -19,6 +20,18 @@ brew install 5sigma/tap/spyder
 Download the linux package from for the latest release:
 
 https://github.com/5Sigma/spyder/releases/latest
+
+#### Debain file
+
+sudo dpkg -i spyder_xx.xx.xx_linux_amd64.deb
+
+#### RPM File
+
+sudo rpm –ivh spyder_xx.xx.xx_linux_amd64.rpm
+
+#### Snapcraft
+
+sudo snap install spyder_xx.xx.xx_linux_amd64.rpm
 
 ### Windows
 
@@ -213,3 +226,16 @@ spyder hammer --count 1000 myEndpoint
 ```
 
 For more information on scripting see the [Scripting Reference](https://github.com/5Sigma/spyder/wiki/Script-Reference)
+
+
+# Tasks
+
+The tasks folder can contain scripts intended to automate a series of requests to an API. Using the `$endpoint` function exposed to scripts requests can be made to configured endpoints. The request parameters can also be altered during the task.
+
+```javascript
+
+userResponse = $endpoint('users/me');
+userId = userResponse.body.id;
+productResponse = $endpoint('products/create', { name: 'myProduct', userId: userId });
+$endpoint('products/archive', { id: productResponse.body.id });
+console.log('Created new archived product for ' + userRepsonse.body.name);
