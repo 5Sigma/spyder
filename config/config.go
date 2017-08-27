@@ -5,6 +5,8 @@ import (
 	"github.com/Jeffail/gabs"
 	"io/ioutil"
 	"os"
+	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -14,25 +16,60 @@ import (
 // for the global config.
 type Config struct {
 	Filename string
+	Filepath string
 	json     *gabs.Container
 }
 
 // LocalConfig - The local configuration read from config.local.json
-var LocalConfig = loadConfigFile("config.local.json")
+var LocalConfig = loadConfigFile("spyder.local.json")
 
 // GlobalConfig - The global configuration read from config.json
-var GlobalConfig = loadConfigFile("config.json")
+var GlobalConfig = loadConfigFile("spyder.json")
 
 // TempConfig - A temporary config object that persists only for the current
 // session.
 var TempConfig = loadDefaultConfig()
 
 // The path to the project root
-var ProjectPath = "."
+var ProjectPath = getProjectPath()
 
 // InMemory - When true the config will not write to the disk. This is used for
 // testing.
 var InMemory = false
+
+// GetProjectPath - returns the project root path it looks for a spyder.config
+// file in the current folder. If found the directory tree is walked up until it
+// finds one. If one is still not found the current path is used. Once a
+// configuration file is found the path can be overriden using the projectPath
+// setting.
+func getProjectPath() string {
+	p := GetSetting("projectPath")
+	if p != "" {
+		return path.Join(GlobalConfig.Filepath, p)
+	} else {
+		return "."
+	}
+}
+
+func getConfigPath(p string) string {
+	if _, err := os.Stat(p); !os.IsNotExist(err) {
+		return p
+	} else {
+		newPath, err := filepath.Abs(path.Join(filepath.Dir(p), "..", filepath.Base(p)))
+		if err != nil {
+			return ""
+		}
+		if newPath == p {
+			return "."
+		}
+		if stat, err := os.Stat(filepath.Dir(newPath)); err == nil && stat.IsDir() {
+			return getConfigPath(newPath)
+		} else {
+			return ""
+		}
+	}
+	return ""
+}
 
 // VariableExists - Checks if a variable exists in either config.
 func VariableExists(str string) bool {
@@ -94,8 +131,10 @@ func loadConfigFile(filename string) *Config {
 		return loadDefaultConfig()
 	}
 
-	if _, err := os.Stat(filename); !os.IsNotExist(err) {
-		bytes, _ := ioutil.ReadFile(filename)
+	configPath := getConfigPath(filename)
+
+	if configPath != "" {
+		bytes, _ := ioutil.ReadFile(configPath)
 		if strings.TrimSpace(string(bytes)) == "" {
 			c = loadDefaultConfig()
 			c.Filename = filename
@@ -103,6 +142,7 @@ func loadConfigFile(filename string) *Config {
 		}
 		c = LoadConfig(bytes)
 		c.Filename = filename
+		c.Filepath = filepath.Dir(configPath)
 		return c
 	}
 	c = loadDefaultConfig()

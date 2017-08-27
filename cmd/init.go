@@ -42,18 +42,19 @@ default it generates the project in the current directory.`,
 		output.PrintResult("Created task folder",
 			createProjectFolder(projectPath, "tasks"))
 		output.PrintResult("Create global config",
-			writeFile("config.json", `
+			writeFile("spyder.json", `
 {
 	"variables": {}
 }
 			`))
 		output.PrintResult("Create local config",
-			writeFile("config.local.json", `
+			writeFile("spyder.local.json", `
 {
 	"variables": {}
 }
 		`))
 		output.PrintResult("Created project", nil)
+		output.Println("\nProject files generated. If you version the project you should add 'spyder.local.json' to you're gitignore")
 	},
 }
 

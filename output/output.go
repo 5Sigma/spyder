@@ -30,6 +30,9 @@ func PrintResult(desc string, err error) {
 func PrintError(err error) {
 	Println(chalk.Red, err.Error(), chalk.Reset)
 }
+func PrintErrorStr(err string) {
+	Println(chalk.Red, err, chalk.Reset)
+}
 
 func PrintFatal(err error) {
 	PrintError(err)

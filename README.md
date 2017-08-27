@@ -32,15 +32,21 @@ https://github.com/5Sigma/spyder/releases/latest
 
 #### Debain file
 
+```
 sudo dpkg -i spyder_xx.xx.xx_linux_amd64.deb
+```
 
 #### RPM File
 
+```
 sudo rpm –ivh spyder_xx.xx.xx_linux_amd64.rpm
+```
 
 #### Snapcraft
 
+```
 sudo snap install spyder_xx.xx.xx_linux_amd64.rpm
+```
 
 ### Windows
 
