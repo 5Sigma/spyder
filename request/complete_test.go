@@ -23,7 +23,7 @@ func TestOnComplete(t *testing.T) {
 		}
 	`, ts.URL)
 	var variableSave = `
-		$variables.set("var", JSON.parse($response.body).inner.value)
+		$variables.set("var", $response.body.inner.value)
 	`
 	testhelper.CreateFile("testdata/scripts/variableSave.js", variableSave)
 	_, err := Do(epConfig)

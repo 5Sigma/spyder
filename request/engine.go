@@ -90,17 +90,23 @@ func (eng *ScriptEngine) ExecuteFile(filepath string) error {
 
 // SetResponse - Used to set the web respone on the engine. It also makes this
 // available to the script.
-func (eng *ScriptEngine) SetResponse(res *Response) {
-	eng.Response = res
-	requestObj, _ := eng.VM.Object(`$request = {}`)
+func (engine *ScriptEngine) SetResponse(res *Response) {
+	engine.Response = res
+	requestObj, _ := engine.VM.Object(`$request = {}`)
 	requestObj.Set("url", res.Request.URL.String())
 	requestObj.Set("contentLength", res.Request.ContentLength)
 
-	responseObj, _ := eng.VM.Object(`$response = {}`)
+	responseObj, _ := engine.VM.Object(`$response = {}`)
 	responseObj.Set("contentLength", res.Response.ContentLength)
-	responseObj.Set("body", string(res.Content))
-	eng.VM.Object(`$response.headers = {}`)
-	responseObj.Set("get", eng.getResHeader)
+	if res.IsResponseJSON() {
+		contentData := make(map[string]interface{})
+		json.Unmarshal(res.Content, &contentData)
+		responseObj.Set("body", contentData)
+	} else {
+		responseObj.Set("body", string(res.Content))
+	}
+	engine.VM.Object(`$response.headers = {}`)
+	responseObj.Set("get", engine.getResHeader)
 }
 
 // SetRequest - Sets the request on the engine. This also builds the functions
