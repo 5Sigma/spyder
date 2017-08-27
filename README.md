@@ -239,3 +239,10 @@ userId = userResponse.body.id;
 productResponse = $endpoint('products/create', { name: 'myProduct', userId: userId });
 $endpoint('products/archive', { id: productResponse.body.id });
 console.log('Created new archived product for ' + userRepsonse.body.name);
+```
+
+To run a task use the `task` command in spider. For example, to run a task at `tasks/products/archive.js`:
+
+```
+spyder task products/archive
+```
