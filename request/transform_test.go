@@ -31,9 +31,8 @@ func TestTransform(t *testing.T) {
 		}
 	`, ts.URL)
 	transform := `
-		var payload = JSON.parse($request.body);
-		payload.var = "hello";
-		$request.setBody(JSON.stringify(payload));
+		$request.body.var = "hello";
+		$request.setBody($request.body);
 	`
 	testhelper.CreateFile("testdata/scripts/transform.js", transform)
 	_, err := Do(epConfig)

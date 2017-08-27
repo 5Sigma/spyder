@@ -124,7 +124,9 @@ func (engine *ScriptEngine) SetPayload(payload []byte) {
 	engine.Payload = payload
 	reqVal, _ := engine.VM.Get("$request")
 	reqObj := reqVal.Object()
-	reqObj.Set("body", string(payload))
+	contentData := make(map[string]interface{})
+	json.Unmarshal(payload, &contentData)
+	reqObj.Set("body", contentData)
 }
 
 //Execute - Executes a Javascript.
@@ -176,8 +178,17 @@ func (engine *ScriptEngine) getPayload(call otto.FunctionCall) otto.Value {
 
 // setPayload - Sets the payload value on the engine.
 func (engine *ScriptEngine) setPayload(call otto.FunctionCall) otto.Value {
-	val, _ := call.Argument(0).ToString()
-	engine.Payload = []byte(val)
+	valArg := call.Argument(0)
+	if valArg.IsString() {
+		val, _ := valArg.ToString()
+		engine.Payload = []byte(val)
+	}
+	if valArg.IsObject() {
+		valRaw, _ := valArg.Export()
+		valMap := valRaw.(map[string]interface{})
+		valBytes, _ := json.Marshal(valMap)
+		engine.Payload = valBytes
+	}
 	return otto.Value{}
 }
 

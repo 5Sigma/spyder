@@ -36,12 +36,12 @@ func TestGetVariable(t *testing.T) {
 	}
 }
 
-func TestPaylaod(t *testing.T) {
+func TestPayload(t *testing.T) {
 	script := `
-		$request.setBody($request.body + ' world');
+		$request.setBody($request.body.val + ' world');
 	`
 	engine := NewScriptEngine(endpoint.New())
-	engine.SetPayload([]byte(`hello`))
+	engine.SetPayload([]byte(`{"val": "hello"}`))
 	engine.Execute(script)
 	if string(engine.Payload) != "hello world" {
 		t.Errorf("Payload not set: %s", engine.Payload)
