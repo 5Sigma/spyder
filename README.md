@@ -63,7 +63,7 @@ Request parameters can be passed using the "data" node in the configuration.
 For GET requests these are encoded and added to the url when the request is
 made.
 
-For POST requests the node is submitted as stringified JSON in the post body.
+For POST requests the node is submitted as a JS object in the post body.
 
 ### Example: A simple GET request
 
@@ -177,9 +177,8 @@ This utilizes an onComplete script to save out the token. A
 `scripts/storeAuthSession.js` file might look like:
 
 ```js
-data = JSON.parse($response.body);
-$variables.set('session_token_id', data.body.data.session.session_id);
-$variables.set('session_token_secret', data.body.data.session.session_secret);
+$variables.set('session_token_id', $response.body.data.session.session_id);
+$variables.set('session_token_secret', $response.body.data.session.session_secret);
 ```
 
 A standard request to the API then might look like: 
@@ -196,7 +195,7 @@ This request uses a transform script located at `scripts/signRequest.js`. That
 could look like:
 
 ```js
-signature = $hmac($variables.get('session_token_secret'), $request.body);
+signature = $hmac($variables.get('session_token_secret'), a JS objectrequest.body);
 $request.headers.set('Authorization', $variables.get('session_token_id') + ':' + signature)
 ```
 
