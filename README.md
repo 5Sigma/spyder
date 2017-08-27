@@ -4,6 +4,15 @@ Status](https://travis-ci.org/5Sigma/spyder.svg?branch=master)](https://travis-c
 # Spyder
 API Testing and Request Framework
 
+- Easily make requests to predefined API endpoints and explor their responses, headers, and other data
+- Making a request drops to a request "explorer" session to easily look at various parts of the request in the terminal.
+- Collaborate with a team without the need for any kind of syncing service. Simply use GIT to version the project.
+- Local configurations to override the versioned configurations. Allowing multiple developers to work easily with slightly different local setups.
+- Stress test endpoints with fast repeated requests and aggregate timing statistics.
+- Dynamically alter requests using a Javascript based scripting language.
+- Variable management using the scripting language or configuration files
+- Generate specific types of random data such as names, phone numbers, products names, address parts, etc
+- Automate tasks using the configured API endpoints with scripts
 
 ## Installation
 
