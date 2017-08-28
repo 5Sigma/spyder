@@ -1,21 +1,7 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package cmd
 
 import (
-	"github.com/5sigma/spyder/output"
+	"github.com/5sigma/vox"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
@@ -33,28 +19,28 @@ default it generates the project in the current directory.`,
 		if len(args) > 0 {
 			projectPath = args[0]
 		}
-		output.PrintResult("Created endpoints folder",
+		vox.PrintResult("Created endpoints folder",
 			createProjectFolder(projectPath, "endpoints"))
-		output.PrintResult("Created config folder",
+		vox.PrintResult("Created config folder",
 			createProjectFolder(projectPath, "config"))
-		output.PrintResult("Created scripts folder",
+		vox.PrintResult("Created scripts folder",
 			createProjectFolder(projectPath, "scripts"))
-		output.PrintResult("Created task folder",
+		vox.PrintResult("Created task folder",
 			createProjectFolder(projectPath, "tasks"))
-		output.PrintResult("Create global config",
+		vox.PrintResult("Create global config",
 			writeFile("spyder.json", `
 {
 	"variables": {}
 }
 			`))
-		output.PrintResult("Create local config",
+		vox.PrintResult("Create local config",
 			writeFile("spyder.local.json", `
 {
 	"variables": {}
 }
 		`))
-		output.PrintResult("Created project", nil)
-		output.Println("\nProject files generated. If you version the project you should add 'spyder.local.json' to you're gitignore")
+		vox.PrintResult("Created project", nil)
+		vox.Println("\nProject files generated. If you version the project you should add 'spyder.local.json' to you're gitignore")
 	},
 }
 

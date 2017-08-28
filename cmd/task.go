@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/output"
 	"github.com/5sigma/spyder/request"
+	"github.com/5sigma/vox"
 	"github.com/spf13/cobra"
 	"path"
 )
@@ -24,7 +24,7 @@ When specifying a task you do not need to specify the extension.
 		filepath := path.Join(config.ProjectPath, "tasks", args[0]+".js")
 		err := engine.ExecuteFile(filepath)
 		if err != nil {
-			output.PrintFatal(err)
+			vox.Fatal(err.Error())
 		}
 	}}
 

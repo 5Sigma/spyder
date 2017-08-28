@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
-	"github.com/5sigma/spyder/output"
+	"github.com/5sigma/vox"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,16 +13,17 @@ import (
 	"path"
 )
 
-var PromptStream *os.File
+var promptStream *os.File
 
 func Setup() {
 	config.InMemory = true
-	output.SupressOutput = true
+	outStream, _ := ioutil.TempFile("", "")
+	vox.SetOutput(outStream)
 	CreateFile("testdata/config.json", "")
 	CreateFile("testdata/config.local.json", "")
 	config.ProjectPath = "testdata"
-	PromptStream, _ = ioutil.TempFile("", "")
-	output.PromptStream = PromptStream
+	promptStream, _ = ioutil.TempFile("", "")
+	vox.SetInput(promptStream)
 }
 
 func Teardown() {
@@ -70,6 +71,6 @@ func EndpointConfig(str, url string) *endpoint.EndpointConfig {
 }
 
 func AddPromptResponse(str string) {
-	io.WriteString(PromptStream, fmt.Sprintf("%s\n", str))
-	PromptStream.Seek(0, os.SEEK_SET)
+	io.WriteString(promptStream, fmt.Sprintf("%s\n", str))
+	promptStream.Seek(0, os.SEEK_SET)
 }

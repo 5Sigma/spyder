@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/output"
+	"github.com/5sigma/vox"
 	"github.com/Jeffail/gabs"
 	"github.com/spf13/cobra"
 	"os"
@@ -17,13 +17,14 @@ var infoCmd = &cobra.Command{
 	Short: "Display project information",
 	Long:  `Display information about Spyder and the current project.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		output.PrintProperty("Project Path", config.ProjectPath)
+		vox.PrintProperty("Project Path", config.ProjectPath)
 		epFolder := path.Join(config.ProjectPath, "endpoints")
 		var epCount int = 0
 		epErrors := make(map[string]string)
 		filepath.Walk(epFolder, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				output.PrintFatal(err)
+				vox.Error("Could not gather endpoint configurations")
+				vox.Fatal(err.Error())
 				return err
 			}
 			if filepath.Ext(path) == ".json" {
@@ -35,12 +36,12 @@ var infoCmd = &cobra.Command{
 			}
 			return nil
 		})
-		output.PrintProperty("Endpoints", fmt.Sprintf("%d", epCount))
+		vox.PrintProperty("Endpoints", fmt.Sprintf("%d", epCount))
 		if len(epErrors) > 0 {
-			output.PrintErrorStr("Endpoint Errors:")
+			vox.Error("Endpoint Errors:")
 			for k, v := range epErrors {
-				output.Println(k)
-				output.PrintErrorStr(v)
+				vox.Println(k)
+				vox.Error(v)
 			}
 		}
 	},

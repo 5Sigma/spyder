@@ -5,8 +5,8 @@ import (
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
 	"github.com/5sigma/spyder/explorer"
-	"github.com/5sigma/spyder/output"
 	"github.com/5sigma/spyder/request"
+	"github.com/5sigma/vox"
 	"github.com/spf13/cobra"
 	"path"
 )
@@ -28,24 +28,24 @@ $ spyder request sessions/auth
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			cmd.Help()
-			output.PrintFatal(errors.New("No endpoint specified"))
+			vox.Fatal(errors.New("No endpoint specified"))
 		}
 		epConfig, err := endpoint.Load(path.Join(config.ProjectPath, "endpoints", args[0]+".json"))
 		if err != nil {
-			output.PrintFatal(err)
+			vox.Fatal(err)
 		}
 		for _, prompt := range epConfig.Prompts {
 			useDefaults, _ := cmd.Flags().GetBool("default")
 			if useDefaults {
 				config.TempConfig.SetVariable(prompt.Name, prompt.DefaultValue)
 			} else {
-				value := output.Prompt(prompt.Name, prompt.DefaultValue)
+				value := vox.Prompt(prompt.Name, prompt.DefaultValue)
 				config.TempConfig.SetVariable(prompt.Name, value)
 			}
 		}
 		res, err := request.Do(epConfig)
 		if err != nil {
-			output.PrintFatal(err)
+			vox.Fatal(err)
 		}
 		explorer.Start(args[0], epConfig, res)
 

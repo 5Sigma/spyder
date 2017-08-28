@@ -1,12 +1,11 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/endpoint"
-	"github.com/5sigma/spyder/output"
 	"github.com/5sigma/spyder/request"
+	"github.com/5sigma/vox"
 	"github.com/dustin/go-humanize"
 	"github.com/spf13/cobra"
 	"path"
@@ -32,13 +31,13 @@ spyder hammer --count 100 myEndpoint`,
 		count, _ = cmd.Flags().GetInt("count")
 		if len(args) == 0 {
 			cmd.Help()
-			output.PrintFatal(errors.New("No endpoint specified"))
+			vox.Fatal("No endpoint specified")
 		}
 
 		configPath := path.Join(config.ProjectPath, "endpoints", args[0]+".json")
 		epConfig, err := endpoint.Load(configPath)
 		if err != nil {
-			output.PrintFatal(err)
+			vox.Fatal(err.Error())
 		}
 
 		for _, prompt := range epConfig.Prompts {
@@ -46,19 +45,19 @@ spyder hammer --count 100 myEndpoint`,
 			if useDefaults {
 				config.TempConfig.SetVariable(prompt.Name, prompt.DefaultValue)
 			} else {
-				value := output.Prompt(prompt.Name, prompt.DefaultValue)
+				value := vox.Prompt(prompt.Name, prompt.DefaultValue)
 				config.TempConfig.SetVariable(prompt.Name, value)
 			}
 		}
 
-		bar := output.NewProgress(count)
+		vox.StartProgress(0, count)
 		for i := 0; i <= count; i++ {
 			res, err := request.Do(epConfig)
 			if err != nil {
-				output.PrintFatal(err)
+				vox.Fatal(err.Error())
 			}
 			totalTime += res.RequestTime
-			bar.Inc()
+			vox.IncProgress()
 			if minTime == 0 {
 				minTime = res.RequestTime
 			}
@@ -73,11 +72,11 @@ spyder hammer --count 100 myEndpoint`,
 
 		avgTime := totalTime / time.Duration(count)
 
-		output.PrintProperty("Number of requests", fmt.Sprintf("%d", count))
-		output.PrintProperty("Average time", fmt.Sprintf("%s", avgTime))
-		output.PrintProperty("Fastest", fmt.Sprintf("%s", minTime))
-		output.PrintProperty("Slowest", fmt.Sprintf("%s", maxTime))
-		output.PrintProperty("Total data transfer",
+		vox.PrintProperty("Number of requests", fmt.Sprintf("%d", count))
+		vox.PrintProperty("Average time", fmt.Sprintf("%s", avgTime))
+		vox.PrintProperty("Fastest", fmt.Sprintf("%s", minTime))
+		vox.PrintProperty("Slowest", fmt.Sprintf("%s", maxTime))
+		vox.PrintProperty("Total data transfer",
 			humanize.Bytes(uint64(totalBytes)))
 	},
 }
