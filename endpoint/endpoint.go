@@ -3,22 +3,24 @@ package endpoint
 import (
 	"errors"
 	"github.com/5sigma/spyder/config"
+	"github.com/5sigma/spyder/sectionfile"
 	"github.com/Jeffail/gabs"
-	"io/ioutil"
 	"net/url"
 	"strings"
 )
 
 type (
 	EndpointConfig struct {
-		Filename   string
-		json       *gabs.Container
-		Method     string
-		Url        string
-		OnComplete []string
-		Transform  []string
-		Headers    map[string][]string
-		Prompts    []*Prompt
+		Filename        string
+		json            *gabs.Container
+		Method          string
+		Url             string
+		OnComplete      []string
+		Transform       []string
+		Headers         map[string][]string
+		Prompts         []*Prompt
+		ResponsePattern string
+		RequestPattern  string
 	}
 	Prompt struct {
 		Name         string
@@ -36,19 +38,21 @@ func New() *EndpointConfig {
 
 // Load - Loads a confugruation from a file on the disk.
 func Load(filename string) (*EndpointConfig, error) {
-	var (
-		fileBytes []byte
-		err       error
-	)
-	fileBytes, err = ioutil.ReadFile(filename)
+	sf, err := sectionfile.Load(filename)
 	if err != nil {
 		return nil, err
 	}
-	return LoadBytes(fileBytes)
+	epConfig, err := LoadBytes(filename, []byte(sf.Contents("endpoint")))
+	if err != nil {
+		return nil, err
+	}
+	epConfig.ResponsePattern = sf.Contents("response")
+	epConfig.RequestPattern = sf.Contents("request")
+	return epConfig, nil
 }
 
 // LoadBytes - Loads a configuration from a byte array
-func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
+func LoadBytes(filename string, fileBytes []byte) (*EndpointConfig, error) {
 	var (
 		jsonObject *gabs.Container
 		err        error
@@ -56,6 +60,7 @@ func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 	)
 
 	jsonObject, err = gabs.ParseJSON(fileBytes)
+
 	if err != nil {
 		return nil, err
 	}
@@ -90,6 +95,7 @@ func LoadBytes(fileBytes []byte) (*EndpointConfig, error) {
 		Transform:  []string{},
 		Headers:    headerMap,
 		Prompts:    prompts,
+		Filename:   filename,
 	}
 
 	transformNodes, _ := jsonObject.S("transform").Children()

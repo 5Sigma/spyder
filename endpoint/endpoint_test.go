@@ -16,12 +16,12 @@ func buildConfig() *gabs.Container {
 func TestLoad(t *testing.T) {
 	json := gabs.New()
 	json.Set("http://localhost/api/endpoint", "url")
-	_, err := LoadBytes([]byte(json.Bytes()))
+	_, err := LoadBytes("", []byte(json.Bytes()))
 	if err == nil {
 		t.Errorf("Should return error for missing required fields")
 	}
 	json.Set("GET", "method")
-	if _, err := LoadBytes([]byte(json.Bytes())); err != nil {
+	if _, err := LoadBytes("", []byte(json.Bytes())); err != nil {
 		t.Errorf("Config parsing error: %s", err.Error())
 	}
 }
@@ -33,7 +33,7 @@ func TestRequestUrl(t *testing.T) {
 	params, _ := json.Object("data")
 	params.Set("3", "option1")
 	params.Set("4", "option2")
-	ep, _ := LoadBytes(json.Bytes())
+	ep, _ := LoadBytes("", json.Bytes())
 	expectedUrl := "http://localhost/api/endpoint?option1=3&option2=4"
 	if ep.RequestURL() != expectedUrl {
 		t.Errorf("Request URL missmatch:\nExpecting: %s\nReceived: %s", expectedUrl,
@@ -42,7 +42,7 @@ func TestRequestUrl(t *testing.T) {
 
 	// POST request
 	json.Set("post", "method")
-	ep, _ = LoadBytes(json.Bytes())
+	ep, _ = LoadBytes("", json.Bytes())
 	if ep.RequestURL() != ep.Url {
 		t.Errorf("Request URL missmatch:\nExpecting: %s\nReceived: %s", ep.Url,
 			ep.RequestURL())
@@ -56,7 +56,7 @@ func TestRequestUrl(t *testing.T) {
 	params.Set("$var", "option2")
 	params.Set("3", "option1")
 	json.Set("http://$host/api/endpoint", "url")
-	ep, _ = LoadBytes(json.Bytes())
+	ep, _ = LoadBytes("", json.Bytes())
 	expectedUrl = "http://127.0.0.1/api/endpoint?option1=3&option2=value1"
 	if ep.RequestURL() != expectedUrl {
 		t.Errorf("Request URL missmatch:\nExpecting: %s\nReceived: %s", expectedUrl,
@@ -71,7 +71,7 @@ func TestHeaders(t *testing.T) {
 	epConfig.Set("application/json", "headers", "Content-Type")
 	epConfig.Set("$var", "headers", "x-custom")
 	config.LocalConfig.SetVariable("var", "value1")
-	ep, err := LoadBytes(epConfig.Bytes())
+	ep, err := LoadBytes("", epConfig.Bytes())
 	if err != nil {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
@@ -92,7 +92,7 @@ func TestHeaders(t *testing.T) {
 func TestRequestMethod(t *testing.T) {
 	epConfig := buildConfig()
 	epConfig.Set("get", "method")
-	ep, err := LoadBytes(epConfig.Bytes())
+	ep, err := LoadBytes("", epConfig.Bytes())
 	if err != nil {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
@@ -102,7 +102,7 @@ func TestRequestMethod(t *testing.T) {
 	}
 	config.LocalConfig.SetVariable("method", "POST")
 	epConfig.Set("$method", "method")
-	ep, err = LoadBytes(epConfig.Bytes())
+	ep, err = LoadBytes("", epConfig.Bytes())
 	if err != nil {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
@@ -123,7 +123,7 @@ func TestRequestData(t *testing.T) {
 			}
 		}
 	`
-	ep, err := LoadBytes([]byte(configStr))
+	ep, err := LoadBytes("", []byte(configStr))
 	if err != nil {
 		t.Fatal("Error loading config: %s", err.Error())
 	}
