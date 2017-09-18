@@ -196,3 +196,8 @@ func validate(json *gabs.Container) bool {
 func (ep *EndpointConfig) String() string {
 	return ep.json.String()
 }
+
+func (ep *EndpointConfig) ResponseDefinition() *gabs.Container {
+	node := ep.json.S("definition", "response")
+	return node
+}

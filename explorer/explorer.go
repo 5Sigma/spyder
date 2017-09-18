@@ -34,6 +34,25 @@ func Start(endpointPath string, epConfig *endpoint.EndpointConfig, res *request.
 	})
 
 	shell.AddCommand(&gshell.Command{
+		Name:        "validate",
+		Description: "validate the response against the definition",
+		Call: func(sh *gshell.Shell, args []string) {
+			result, err := epConfig.ValidateResponse(string(res.Content))
+			if err != nil {
+				vox.Fatal(err.Error())
+			}
+			if result.Valid() {
+				vox.Printlnc(vox.Green, fmt.Sprintf("[%s] valid response", endpointPath))
+			} else {
+				vox.Error("The response was invalid:\n")
+				for _, desc := range result.Errors() {
+					vox.Errorf("- %s\n", desc)
+				}
+			}
+		},
+	})
+
+	shell.AddCommand(&gshell.Command{
 		Name:        "response",
 		Description: "Displays various information about the response.",
 		Call: func(sh *gshell.Shell, args []string) {
