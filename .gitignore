@@ -1,3 +1,6 @@
 vendor/
 dist/
 testdata/
+node_modules/
+build/
+
