@@ -3,6 +3,7 @@ package endpoint
 import (
 	"errors"
 	"github.com/5sigma/spyder/config"
+	"github.com/5sigma/spyder/faker"
 	"github.com/5sigma/spyder/sectionfile"
 	"github.com/Jeffail/gabs"
 	"net/url"
@@ -11,6 +12,7 @@ import (
 
 type (
 	EndpointConfig struct {
+		Name            string
 		Filename        string
 		json            *gabs.Container
 		Method          string
@@ -86,8 +88,10 @@ func LoadBytes(filename string, fileBytes []byte) (*EndpointConfig, error) {
 		prompt := &Prompt{Name: key, DefaultValue: defaultValue}
 		prompts = append(prompts, prompt)
 	}
+	name, _ := jsonObject.Path("name").Data().(string)
 
 	epConfig = &EndpointConfig{
+		Name:       name,
 		json:       jsonObject,
 		Method:     method,
 		Url:        url,
@@ -140,7 +144,7 @@ func (ep *EndpointConfig) RequestMethod() string {
 // and has request parameters they are included in the URL.
 func (ep *EndpointConfig) RequestURL() string {
 	if ep.RequestMethod() == "GET" {
-		baseURL, _ := url.Parse(expandFakes(config.ExpandString(ep.Url)))
+		baseURL, _ := url.Parse(faker.ExpandFakes(config.ExpandString(ep.Url)))
 		params := url.Values{}
 		for k, v := range ep.GetRequestParams() {
 			params.Add(k, v)
@@ -166,7 +170,7 @@ func (ep *EndpointConfig) GetRequestParams() map[string]string {
 	for key, child := range children {
 		childData, ok := child.Data().(string)
 		if ok {
-			paramsMap[key] = expandFakes(config.ExpandString(childData))
+			paramsMap[key] = faker.ExpandFakes(config.ExpandString(childData))
 		}
 
 	}
@@ -178,7 +182,7 @@ func (ep *EndpointConfig) GetRequestParams() map[string]string {
 func (ep *EndpointConfig) RequestData() []byte {
 	dataJSON := ep.GetJSONString("data")
 	dataJSON = config.ExpandString(dataJSON)
-	dataJSON = expandFakes(dataJSON)
+	dataJSON = faker.ExpandFakes(dataJSON)
 	return []byte(dataJSON)
 }
 
@@ -205,5 +209,10 @@ func (ep *EndpointConfig) String() string {
 
 func (ep *EndpointConfig) ResponseDefinition() *gabs.Container {
 	node := ep.json.S("definition", "response")
+	return node
+}
+
+func (ep *EndpointConfig) RequestDefinition() *gabs.Container {
+	node := ep.json.S("definition", "request")
 	return node
 }

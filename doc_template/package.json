@@ -1,0 +1,20 @@
+{
+  "name": "doc_template",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "htmlencode": "0.0.4",
+    "lodash": "^4.17.4",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-highlight": "^0.10.0",
+    "react-scripts": "1.0.13",
+    "react-syntax-highlighter": "^5.7.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

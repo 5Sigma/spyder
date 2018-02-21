@@ -51,7 +51,7 @@ func ep() *endpoint.EndpointConfig {
 		}
 	}
 `
-	ep, err := endpoint.LoadBytes([]byte(config))
+	ep, err := endpoint.LoadBytes("", []byte(config))
 	if err != nil {
 		panic(err)
 	}
@@ -59,6 +59,6 @@ func ep() *endpoint.EndpointConfig {
 }
 
 func TestEndpointSection(t *testing.T) {
-	res, _ := EndpointSection("testing/test", ep())
+	res, _ := ProcessTemplate()
 	t.Error(res)
 }

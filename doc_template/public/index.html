@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>React App</title>
+  <script>
+
+			var apiData = {
+					"projectName": "API Documentation",
+					"baseUrl": "",
+        "endpoints": [
+
+							{
+								"url": "$baseURL/v1/admin/users/create",
+								"name": "admin/test",
+								"path": "admin/test",
+								"method": "POST",
+                "params": [],
+              },
+						
+							{
+								"url": "$baseURL/v1/admin/users/create",
+								"name": "admin/users/create",
+								"path": "admin/users/create",
+								"method": "POST",
+								"params": [],
+								"response": {
+  "data": [
+    {
+      "emailAddress": "123",
+      "firstName": "123",
+      "identifier": "123",
+      "lastName": "123",
+      "password": "123",
+      "phoneNumber": "123",
+      "userType": "123"
+    }
+  ]
+},
+								"request": {
+  "data": [
+    {
+      "companyId": 123,
+      "emailAddress": "123",
+      "firstName": "123",
+      "identifier": "123",
+      "lastName": "123",
+      "partnerId": 123,
+      "password": "123",
+      "phoneNumber": "123",
+      "userType": "123"
+    }
+  ]
+},
+								"documentation": "<h1>Create one or more users</h1><p>This endpoint can be passed an array of users and each will be created andreturned.The <em>userType</em> value is access level dependent. So not all values will beavailable. The acceptable values are: admin, employee, partner.+ If the value employee is used a <em>companyId</em> must also be provided.+ If partner is used a <em>partnerId</em> must be provided.</p>"
+							}
+						
+							,{
+								"url": "$baseURL/$version/auth/login",
+								"name": "auth/login",
+								"path": "auth/login",
+								"method": "POST",
+								"params": [],
+								"response": {
+  "error": "",
+  "errorMessage": "123",
+  "errorNumber": 123,
+  "token": "463928ea4b75432f897a681cb02196c6",
+  "user": {
+    "companyId": "463928ea4b75432f897a681cb02196c6",
+    "emailAddress": "john@smith.com",
+    "firstName": "#firstName",
+    "identifier": "463928ea4b75432f897a681cb02196c6",
+    "lastName": "Smith",
+    "phoneNumber": "4022189191",
+    "userType": "employee"
+  }
+},
+								"request": {
+  "emailAddress": "123",
+  "password": "123"
+},
+								"documentation": "<h1>Creates a user session</h1><p>This endpoint will generate a API session for a given user. Poviding theemailAddress and passwords match.The response will contain a <em>token</em> property that must be passed to most APIcalls in the <em>Authorization</em> header of the request.</p>"
+							}
+						
+							,{
+								"url": "$baseURL/v1/auth/signUp",
+								"name": "auth/signup",
+								"path": "auth/signup",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/v1/auth/verify",
+								"name": "auth/verify",
+								"path": "auth/verify",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/$version/companies/create",
+								"name": "companies/create",
+								"path": "companies/create",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/$version/companies/get",
+								"name": "companies/get",
+								"path": "companies/get",
+								"method": "POST",
+								"params": [],
+								"response": {
+  "data": [
+    {
+      "addressCity": "123",
+      "addressPostalCode": "123",
+      "addressState": "123",
+      "addressStreet1": "123",
+      "addressStreet2": "123",
+      "identifier": "92ce0f38c3a24f5e844ae2514620ee73",
+      "name": "Acme Industries",
+      "phoneNumber": "123"
+    }
+  ]
+},
+								"request": {
+  "identifiers": [
+    "92ce0f38c3a24f5e844ae2514620ee73"
+  ]
+},
+								"documentation": "<p>This endpoint returns a list of companies specified by the passed identifiers.</p>"
+							}
+						
+							,{
+								"url": "$baseURL/$version/companies/list",
+								"name": "companies/list",
+								"path": "companies/list",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/$version/products/$id",
+								"name": "products/changeName",
+								"path": "products/changeName",
+								"method": "PUT",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/v1/products",
+								"name": "products/create",
+								"path": "products/create",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/$version/products/get",
+								"name": "products/get",
+								"path": "products/get",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/v1/products",
+								"name": "products/list",
+								"path": "products/list",
+								"method": "GET",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/$version/users/activity",
+								"name": "users/activity",
+								"path": "users/activity",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/$version/users/create",
+								"name": "users/create",
+								"path": "users/create",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/v1/users/list",
+								"name": "users/list",
+								"path": "users/list",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/v1/users/me",
+								"name": "users/me",
+								"path": "users/me",
+								"method": "GET",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+							,{
+								"url": "$baseURL/$version/users/update",
+								"name": "users/update",
+								"path": "users/update",
+								"method": "POST",
+								"params": [],
+								"response": {},
+								"request": {},
+								"documentation": ""
+							}
+						
+					]
+				}
+    </script>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+      -->
+      <div class="footer">
+        Documentation generated by Spyder.
+      </div>
+  </body>
+</html>

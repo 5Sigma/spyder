@@ -54,7 +54,6 @@ func LoadString(filename, fileContents string) *SectionFile {
 		matches := headerRx.FindStringSubmatch(line)
 
 		if len(matches) > 0 {
-			println(matches[0])
 			if strings.TrimSpace(sectionContent) != "" {
 				sf.Sections[sectionName] = sectionContent
 			}

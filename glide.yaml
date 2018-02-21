@@ -1,0 +1,16 @@
+package: github.com/5sigma/spyder
+import:
+- package: github.com/5sigma/gshell
+- package: github.com/5sigma/vox
+- package: github.com/Jeffail/gabs
+- package: github.com/dustin/go-humanize
+- package: github.com/icrowley/fake
+- package: github.com/robertkrimen/otto
+  subpackages:
+  - parser
+  - underscore
+- package: gopkg.in/russross/blackfriday.v2
+- package: github.com/spf13/cobra
+- package: github.com/spf13/viper
+- package: github.com/ttacon/chalk
+- package: github.com/xeipuuv/gojsonschema

@@ -1,0 +1,95 @@
+hash: 53823f0266cc2de3771d4b02a7420c7b689e29fdfb0b47e85f27379c75159935
+updated: 2018-02-20T19:17:55.54495537-05:00
+imports:
+- name: github.com/5sigma/gshell
+  version: 53c5aa4df3de873cf9e0d18c350d63794545af1e
+- name: github.com/5sigma/vox
+  version: bcae611b19bf9e9a741d3acf471cdd115b012f74
+- name: github.com/chzyer/readline
+  version: f6d7a1f6fbf35bbf9beb80dc63c56a29dcfb759f
+- name: github.com/corpix/uarand
+  version: 2b8494104d86337cdd41d0a49cbed8e4583c0ab4
+- name: github.com/dustin/go-humanize
+  version: bb3d318650d48840a39aa21a027c6630e198e626
+- name: github.com/fsnotify/fsnotify
+  version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
+- name: github.com/gosuri/uilive
+  version: ac356e6e42cd31fcef8e6aec13ae9ed6fe87713e
+- name: github.com/hashicorp/hcl
+  version: 23c074d0eceb2b8a5bfdbb271ab780cde70f05a8
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/printer
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/icrowley/fake
+  version: 4178557ae428460c3780a381c824a1f3aceb6325
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/Jeffail/gabs
+  version: 44cbc27138518b15305cb3eef220d04f2d641b9b
+- name: github.com/magiconair/properties
+  version: 2c9e9502788518c97fe44e8955cd069417ee89df
+- name: github.com/mattn/go-isatty
+  version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+- name: github.com/mitchellh/mapstructure
+  version: a4e142e9c047c904fa2f1e144d9a84e6133024bc
+- name: github.com/pelletier/go-toml
+  version: acdc4509485b587f5e675510c4f2c63e90ff68a8
+- name: github.com/robertkrimen/otto
+  version: 3b44b4dcb6c00477273595c312908e2412d07da6
+  subpackages:
+  - ast
+  - dbg
+  - file
+  - parser
+  - registry
+  - token
+  - underscore
+- name: github.com/shurcooL/sanitized_anchor_name
+  version: 86672fcb3f950f35f2e675df2240550f2a50762f
+- name: github.com/spf13/afero
+  version: bbf41cb36dffe15dff5bf7e18c447801e7ffe163
+  subpackages:
+  - mem
+- name: github.com/spf13/cast
+  version: 8965335b8c7107321228e3e3702cab9832751bac
+- name: github.com/spf13/cobra
+  version: be77323fc05148ef091e83b3866c0d47c8e74a8b
+- name: github.com/spf13/jwalterweatherman
+  version: 7c0cea34c8ece3fbeb2b27ab9b59511d360fb394
+- name: github.com/spf13/pflag
+  version: ee5fd03fd6acfd43e44aea0b4135958546ed8e73
+- name: github.com/spf13/viper
+  version: aafc9e6bc7b7bb53ddaa75a5ef49a17d6e654be5
+- name: github.com/ttacon/chalk
+  version: 22c06c80ed312dcb6e1cf394f9634aa2c4676e22
+- name: github.com/xeipuuv/gojsonpointer
+  version: 4e3ac2762d5f479393488629ee9370b50873b3a6
+- name: github.com/xeipuuv/gojsonreference
+  version: bd5ef7bd5415a7ac448318e64f11a24cd21e594b
+- name: github.com/xeipuuv/gojsonschema
+  version: 8bcffc811467a5f691810420385be6e66b35a317
+- name: golang.org/x/sys
+  version: 37707fdb30a5b38865cfb95e5aab41707daec7fd
+  subpackages:
+  - unix
+- name: golang.org/x/text
+  version: 4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1
+  subpackages:
+  - transform
+  - unicode/norm
+- name: gopkg.in/russross/blackfriday.v2
+  version: cadec560ec52d93835bf2f15bd794700d3a2473b
+- name: gopkg.in/sourcemap.v1
+  version: 6e83acea0053641eff084973fee085f0c193c61a
+  subpackages:
+  - base64vlq
+- name: gopkg.in/yaml.v2
+  version: d670f9405373e636a5a2765eea47fac0c9bc91a4
+testImports: []

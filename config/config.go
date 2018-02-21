@@ -112,6 +112,16 @@ func GetSetting(str string) string {
 	return ""
 }
 
+// GetSetting - Returns the value of a variable from either config. Priority
+// goes to the local config. If no value is found the default is returned.
+func GetSettingDefault(str, def string) string {
+	res := GetSetting(str)
+	if res == "" {
+		return def
+	}
+	return res
+}
+
 // ExpandString - Given a string with a variable inside it. The string will be
 // expanded and the variable placeholders replaced with variables from either
 // config. Priority goes to the local config.
@@ -211,6 +221,17 @@ func (c *Config) SettingExists(name string) bool {
 func (c *Config) GetSetting(name string) string {
 	v, _ := c.json.Path(name).Data().(string)
 	return v
+}
+
+// GetSetting - Returns a setting as a string from the path specified in the
+// config. If the setting does not exist the default value is returned.
+func (c *Config) GetSettingDefault(name, def string) string {
+	if c.SettingExists(name) {
+		v, _ := c.json.Path(name).Data().(string)
+		return v
+	} else {
+		return def
+	}
 }
 
 // String - returns the config JSON as a string.
