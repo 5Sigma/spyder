@@ -150,9 +150,9 @@ func (ep *EndpointConfig) RequestURL() string {
 			params.Add(k, v)
 		}
 		baseURL.RawQuery = params.Encode()
-		return baseURL.String()
+		return config.ExpandURL(baseURL.String())
 	} else {
-		return ep.GetString("url")
+		return config.ExpandURL(ep.GetString("url"))
 	}
 }
 

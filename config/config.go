@@ -122,6 +122,19 @@ func GetSettingDefault(str, def string) string {
 	return res
 }
 
+func SettingExists(name string) bool {
+	return LocalConfig.SettingExists(name) || GlobalConfig.SettingExists(name)
+}
+
+// ExpandURL - Returns a full URL taking into account any base url settings
+func ExpandURL(urlFragment string) string {
+	if SettingExists("baseURL") {
+		return GetSetting("baseURL") + urlFragment
+	} else {
+		return urlFragment
+	}
+}
+
 // ExpandString - Given a string with a variable inside it. The string will be
 // expanded and the variable placeholders replaced with variables from either
 // config. Priority goes to the local config.

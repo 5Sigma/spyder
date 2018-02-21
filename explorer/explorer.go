@@ -68,8 +68,22 @@ func Start(endpointPath string, epConfig *endpoint.EndpointConfig, res *request.
 		Name:        "request",
 		Description: "Displays various information about the request.",
 		Call: func(sh *gshell.Shell, args []string) {
-			vox.PrintProperty("Url", res.Request.URL.String())
+			url := res.Request.URL.String()
+			if len(url) > 40 {
+				vox.PrintProperty("Url", "..."+url[len(url)-40:])
+			} else {
+				vox.PrintProperty("Url", url)
+			}
+			vox.PrintProperty("Method", epConfig.Method)
 			vox.PrintProperty("Content Length", humanize.Bytes(uint64(res.Request.ContentLength)))
+		},
+	})
+
+	shell.AddCommand(&gshell.Command{
+		Name:        "request.url",
+		Description: "Displays the full url for the request",
+		Call: func(sh *gshell.Shell, args []string) {
+			vox.Println(res.Request.URL.String())
 		},
 	})
 
@@ -77,7 +91,7 @@ func Start(endpointPath string, epConfig *endpoint.EndpointConfig, res *request.
 		Name:        "request.body",
 		Description: "Displays the post data sent in the request",
 		Call: func(sh *gshell.Shell, args []string) {
-			switch res.Request.Header.Get("Content-Type") {
+			switch res.Response.Header.Get("Content-Type") {
 			case "application/json":
 				vox.PrintJSON(res.Payload)
 			default:
