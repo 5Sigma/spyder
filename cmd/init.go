@@ -21,8 +21,6 @@ default it generates the project in the current directory.`,
 		}
 		vox.PrintResult("Created endpoints folder",
 			createProjectFolder(projectPath, "endpoints"))
-		vox.PrintResult("Created config folder",
-			createProjectFolder(projectPath, "config"))
 		vox.PrintResult("Created scripts folder",
 			createProjectFolder(projectPath, "scripts"))
 		vox.PrintResult("Created task folder",
