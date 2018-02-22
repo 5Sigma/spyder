@@ -37,14 +37,9 @@ var ProjectPath = getProjectPath()
 // testing.
 var InMemory = false
 
-// GetProjectPath - returns the project root path it looks for a spyder.config
-// file in the current folder. If found the directory tree is walked up until it
-// finds one. If one is still not found the current path is used. Once a
-// configuration file is found the path can be overriden using the projectPath
-// setting.
 func getProjectPath() string {
 	p := GetSetting("projectPath")
-	if p != "" {
+	if p == "" {
 		return path.Join(GlobalConfig.Filepath, p)
 	} else {
 		return "."
