@@ -2,7 +2,6 @@ package docgen
 
 import (
 	"github.com/5sigma/spyder/endpoint"
-	"testing"
 )
 
 func ep() *endpoint.EndpointConfig {
@@ -56,9 +55,4 @@ func ep() *endpoint.EndpointConfig {
 		panic(err)
 	}
 	return ep
-}
-
-func TestEndpointSection(t *testing.T) {
-	res, _ := ProcessTemplate()
-	t.Error(res)
 }

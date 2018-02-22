@@ -107,7 +107,7 @@ func TestRequestMethod(t *testing.T) {
 		t.Fatalf("Error reading config: %s", err.Error())
 	}
 	if ep.RequestMethod() != "POST" {
-		t.Fatalf("String expansion for request method failed\n%s\n", "POST",
+		t.Fatalf("String expansion for request method failed\n%s\n",
 			ep.RequestMethod())
 	}
 }
@@ -125,7 +125,7 @@ func TestRequestData(t *testing.T) {
 	`
 	ep, err := LoadBytes("", []byte(configStr))
 	if err != nil {
-		t.Fatal("Error loading config: %s", err.Error())
+		t.Fatalf("Error loading config: %s", err.Error())
 	}
 	parsedData, _ := gabs.ParseJSON(ep.RequestData())
 	v := parsedData.Path("dynamic").Data().(string)

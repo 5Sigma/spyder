@@ -28,13 +28,18 @@ default it generates the project in the current directory.`,
 		vox.PrintResult("Create global config",
 			writeFile("spyder.json", `
 {
-	"variables": {}
+	"docs": {
+		"port": "3000"
+	},
+	"variables": {
+	}
 }
 			`))
 		vox.PrintResult("Create local config",
 			writeFile("spyder.local.json", `
 {
-	"variables": {}
+	"variables": {
+	}
 }
 		`))
 		vox.PrintResult("Created project", nil)

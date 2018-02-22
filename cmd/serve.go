@@ -2,10 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/5sigma/spyder/config"
 	"github.com/5sigma/spyder/docgen"
 	"github.com/5sigma/vox"
 	"github.com/spf13/cobra"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -44,7 +46,9 @@ https://github.com/5Sigma/spyder/wiki
 				fmt.Fprintf(w, tmpl)
 			}
 			elapsed := time.Since(start)
-			vox.Println("Documentation rebuild in ", vox.Yellow, fmt.Sprintf("%s", elapsed), vox.ResetColor)
+			vox.Println("Documentation rebuild in ",
+				vox.Yellow,
+				fmt.Sprintf("%s", elapsed), vox.ResetColor)
 		})
 
 		port, _ := cmd.Flags().GetInt("port")
@@ -56,5 +60,10 @@ https://github.com/5Sigma/spyder/wiki
 
 func init() {
 	docsCmd.AddCommand(serveCmd)
-	serveCmd.PersistentFlags().Int("port", 3000, "Port to listen on")
+	portStr := config.GetSettingDefault("docs.port", "3000")
+	portInt, err := strconv.Atoi(portStr)
+	if err != nil {
+		portInt = 3000
+	}
+	serveCmd.PersistentFlags().Int("port", portInt, "Port to listen on")
 }

@@ -50,7 +50,7 @@ func endpoint() *EndpointConfig {
 		}
 	}
 	`
-	ep, err := LoadBytes([]byte(config))
+	ep, err := LoadBytes("file", []byte(config))
 	if err != nil {
 		panic(err)
 	}
@@ -60,5 +60,7 @@ func endpoint() *EndpointConfig {
 func TestExampleResponse(t *testing.T) {
 	ep := endpoint()
 	res := ep.ExampleResponse()
-	// t.Error(res)
+	if res == "" {
+		t.Error("Example response is empty")
+	}
 }

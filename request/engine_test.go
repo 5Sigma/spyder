@@ -74,7 +74,7 @@ func TestHeaders(t *testing.T) {
 		if len(headerArr) == 0 {
 			t.Fatal("Header not present")
 		}
-		t.Errorf("Header not set: %s", req.Header.Get("test-header2")[0])
+		t.Errorf("Header not set: %s", req.Header.Get("test-header2"))
 	}
 }
 
