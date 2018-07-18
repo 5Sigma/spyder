@@ -1,4 +1,4 @@
-package: github.com/5sigma/spyder
+package: github.com/5Sigma/spyder
 import:
 - package: github.com/5sigma/gshell
 - package: github.com/5sigma/vox

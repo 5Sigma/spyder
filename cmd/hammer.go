@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/endpoint"
-	"github.com/5sigma/spyder/request"
+	"github.com/5Sigma/spyder/config"
+	"github.com/5Sigma/spyder/endpoint"
+	"github.com/5Sigma/spyder/request"
 	"github.com/5sigma/vox"
 	"github.com/dustin/go-humanize"
 	"github.com/spf13/cobra"

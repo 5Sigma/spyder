@@ -26,7 +26,7 @@ $ spyder init
 
 For more information on defining endpoitns and other customization options see:
 
-http://github.com/5sigma/spyder
+http://github.com/5Sigma/spyder
 `,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:

@@ -1,7 +1,7 @@
 package endpoint
 
 import (
-	"github.com/5sigma/spyder/faker"
+	"github.com/5Sigma/spyder/faker"
 	"github.com/Jeffail/gabs"
 )
 

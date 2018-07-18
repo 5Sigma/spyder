@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"bytes"
-	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/testhelper"
+	"github.com/5Sigma/spyder/config"
+	"github.com/5Sigma/spyder/testhelper"
 	"testing"
 )
 

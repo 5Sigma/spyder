@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/5sigma/spyder/testhelper"
+	"github.com/5Sigma/spyder/testhelper"
 	"github.com/Jeffail/gabs"
 	"io/ioutil"
 	"net/http"

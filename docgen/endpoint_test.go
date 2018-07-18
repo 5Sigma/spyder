@@ -1,7 +1,7 @@
 package docgen
 
 import (
-	"github.com/5sigma/spyder/endpoint"
+	"github.com/5Sigma/spyder/endpoint"
 )
 
 func ep() *endpoint.EndpointConfig {

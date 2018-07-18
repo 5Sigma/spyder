@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/5sigma/spyder/config"
+	"github.com/5Sigma/spyder/config"
 	"github.com/5sigma/vox"
 	"github.com/spf13/cobra"
 	"os"

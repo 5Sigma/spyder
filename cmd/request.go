@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/endpoint"
-	"github.com/5sigma/spyder/explorer"
-	"github.com/5sigma/spyder/request"
+	"github.com/5Sigma/spyder/config"
+	"github.com/5Sigma/spyder/endpoint"
+	"github.com/5Sigma/spyder/explorer"
+	"github.com/5Sigma/spyder/request"
 	"github.com/5sigma/vox"
 	"github.com/spf13/cobra"
 	"path"

@@ -2,8 +2,8 @@ package testhelper
 
 import (
 	"fmt"
-	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/endpoint"
+	"github.com/5Sigma/spyder/config"
+	"github.com/5Sigma/spyder/endpoint"
 	"github.com/5sigma/vox"
 	"io"
 	"io/ioutil"

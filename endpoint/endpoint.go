@@ -2,9 +2,9 @@ package endpoint
 
 import (
 	"errors"
-	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/faker"
-	"github.com/5sigma/spyder/sectionfile"
+	"github.com/5Sigma/spyder/config"
+	"github.com/5Sigma/spyder/faker"
+	"github.com/5Sigma/spyder/sectionfile"
 	"github.com/Jeffail/gabs"
 	"net/url"
 	"strings"

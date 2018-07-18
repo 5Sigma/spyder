@@ -3,8 +3,8 @@ package request
 import (
 	"bytes"
 	"fmt"
-	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/endpoint"
+	"github.com/5Sigma/spyder/config"
+	"github.com/5Sigma/spyder/endpoint"
 	"io/ioutil"
 	"net/http"
 	"path"

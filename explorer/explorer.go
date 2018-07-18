@@ -3,9 +3,9 @@ package explorer
 import (
 	"fmt"
 	"github.com/5sigma/gshell"
-	"github.com/5sigma/spyder/config"
-	"github.com/5sigma/spyder/endpoint"
-	"github.com/5sigma/spyder/request"
+	"github.com/5Sigma/spyder/config"
+	"github.com/5Sigma/spyder/endpoint"
+	"github.com/5Sigma/spyder/request"
 	"github.com/5sigma/vox"
 	"github.com/Jeffail/gabs"
 	"github.com/dustin/go-humanize"
